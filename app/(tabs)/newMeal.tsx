@@ -1,70 +1,83 @@
 import { useState } from "react";
-import { View, Text, TextInput, StyleSheet, SafeAreaView, Pressable } from "react-native";
-import { Link, Stack } from "expo-router";
+import { View, Text, TextInput, StyleSheet, SafeAreaView, Pressable, Button, FlatList } from "react-native";
+import { Link, useRouter } from "expo-router";
 
 import { useCameraPermissions } from "expo-camera";
 
-import { MealItem } from "../../types/interfaces"
+import { useMealContext } from "../../contexts/MealContext";
 
-export default function Home() {
-  
-  const [meal,setMeal] = useState([])
-  const [mealItem, setMealItem] = useState<MealItem>({
+export default function AddMeal() {
+  const { meal } = useMealContext();
+  const { addMeal } = useMealContext();
+  const [newMeal, setNewMeal] = useState({
     name: "",
     carbs: 0,
     protein: 0,
-    fats: 0
-  })
+    fats: 0,
+  });
 
-  const handleChange = (key: keyof MealItem, value: string | number) => {
-    setMealItem((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const router = useRouter();
+
+  const handlePress = () => {
+    router.navigate('/newMealPages')
+  };
+
+  const handleAddMeal = () => {
+    addMeal(newMeal); 
+    setNewMeal({ name: "", carbs: 0, protein: 0, fats: 0 }); 
   };
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: "New Meal", headerShown: false }} />
-      <Text style={styles.label}>Meal Name:</Text>
       <TextInput
         style={styles.input}
-        placeholder="Name"
-        value={mealItem.name}
-        onChangeText={(text) => handleChange("name", text)}
+        placeholder="Meal Name"
+        value={newMeal.name}
+        onChangeText={(text) => setNewMeal({ ...newMeal, name: text })}
       />
-      <Text style={styles.label}>Carbs (g):</Text>
       <TextInput
         style={styles.input}
-        keyboardType="numeric"
         placeholder="Carbs"
-        value={mealItem.carbs.toString()}
-        onChangeText={(text) => handleChange("carbs", parseFloat(text) || 0)}
+        keyboardType="numeric"
+        value={newMeal.carbs.toString()}
+        onChangeText={(text) => setNewMeal({ ...newMeal, carbs: parseInt(text) || 0 })}
       />
-      <Text style={styles.label}>Protein (g):</Text>
       <TextInput
         style={styles.input}
-        keyboardType="numeric"
         placeholder="Protein"
-        value={mealItem.protein.toString()}
-        onChangeText={(text) => handleChange("protein", parseFloat(text) || 0)}
+        keyboardType="numeric"
+        value={newMeal.protein.toString()}
+        onChangeText={(text) => setNewMeal({ ...newMeal, protein: parseInt(text) || 0 })}
       />
-      <Text style={styles.label}>Fats (g):</Text>
       <TextInput
         style={styles.input}
-        keyboardType="numeric"
         placeholder="Fats"
-        value={mealItem.fats.toString()}
-        onChangeText={(text) => handleChange("fats", parseFloat(text) || 0)}
+        keyboardType="numeric"
+        value={newMeal.fats.toString()}
+        onChangeText={(text) => setNewMeal({ ...newMeal, fats: parseInt(text) || 0 })}
       />
-      <Text style={styles.debugText}>Meal Item: {JSON.stringify(mealItem, null, 2)}</Text>
-      <Link href={"/newMeal"} asChild>
-          <Pressable>
-            <Text>
-              Scan Code
-            </Text>
-          </Pressable>
-        </Link>
+      <Button title="Add Meal" onPress={handleAddMeal} />
+      <Pressable
+      style={({ pressed }) => [
+        styles.button,
+        pressed && styles.buttonPressed,
+      ]}
+      onPress={(handlePress)} 
+    >
+      <Text style={styles.buttonText}>Scan Code</Text>
+    </Pressable>
+      <FlatList
+      data={meal}
+      keyExtractor={(item, index) => index.toString()}
+      renderItem={({ item }) => (
+        <View>
+          <Text>Name: {item.name}</Text>
+          <Text>Carbs: {item.carbs}</Text>
+          <Text>Protein: {item.protein}</Text>
+          <Text>Fats: {item.fats}</Text>
+        </View>
+      )}
+    />
     </View>
   );
 }
@@ -87,9 +100,19 @@ const styles = StyleSheet.create({
     padding: 8,
     fontSize: 16,
   },
-  debugText: {
-    marginTop: 16,
-    fontSize: 14,
-    color: "gray",
+  button: {
+    backgroundColor: "#007BFF",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  buttonPressed: {
+    backgroundColor: "#0056b3",
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
