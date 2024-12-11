@@ -1,20 +1,25 @@
-import axios from 'axios';
+import { ApiResponse } from '@/types/interfaces';
 
-const fetchProductData = async (barcode: string) => {
+async function fetchProduct(barcode: string): Promise<ApiResponse> {
+  const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+  return response.json();
+}
+
+async function handleProductFetch(barcode: string) {
   try {
-    const response = await axios.get(
-      `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`
-    );
-    if (response.data.status === 1) {
-      const product = response.data.product;
-      console.log('Tuotenimi:', product.product_name);
-      console.log('Ravintoarvot:', product.nutriments);
+    const data = await fetchProduct(barcode); // Fetch product details based on barcode
+
+    if (data.status === 1 && data.product) {
+      console.log("Product succesfully fetched from API");
+      return data; // Return the valid data
     } else {
-      console.log('Tuotetta ei löytynyt.');
+      console.error("Product not found or invalid response.");
+      return null; // Return null in case of missing data
     }
   } catch (error) {
-    console.error('Virhe haettaessa tietoja:', error);
+    console.error("Error fetching product:", error);
+    return null; // Handle the error and return null
   }
-};
+}
 
-export default fetchProductData;
+export default handleProductFetch;

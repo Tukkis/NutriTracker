@@ -2,10 +2,12 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 import { MealItem, MealContextType } from "../types/interfaces";
 
 const defaultMealItem: MealItem = {
-  name: "",
-  carbs: 0,
-  protein: 0,
-  fats: 0,
+  product_name: "",
+  "energy-kcal": 0,
+  carbohydrates_value: 0,
+  proteins_value: 0,
+  fat_value: 0,
+  amount: 0
 };
 
 const MealContext = createContext<MealContextType | undefined>(undefined);

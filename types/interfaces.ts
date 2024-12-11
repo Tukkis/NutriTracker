@@ -1,8 +1,10 @@
 export interface MealItem {
-    name: string;
-    carbs: number;
-    protein: number;
-    fats: number;
+    product_name: string;
+    "energy-kcal"?: number;
+    carbohydrates_value: number;
+    proteins_value: number;
+    fat_value: number;
+    amount: number;
 }
 
 export interface MealContextType {
@@ -11,4 +13,18 @@ export interface MealContextType {
     mealItem: MealItem;
     setMealItem: React.Dispatch<React.SetStateAction<MealItem>>;
     addMeal: (newMeal: MealItem) => void;
-  }
+}
+  
+interface Product {
+    product_name?: string;
+    nutriments?: MealItem;
+    ingredients_text?: string;
+    brands?: string;
+    [key: string]: any; 
+}
+  
+export interface ApiResponse {
+    code: string;
+    status: number;
+    product?: Product; 
+}

@@ -9,7 +9,7 @@ import {
   StatusBar,
   StyleSheet,
 } from "react-native";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Overlay from "../../pageFiles/newMeal/components/Overlay";
 import fetchProductData from "../../pageFiles/newMeal/helpers/fetchproductdata";
 import { useMealContext } from "../../contexts/MealContext";
@@ -18,10 +18,12 @@ import { MealItem } from "@/types/interfaces";
 export default function HomeScreen() {
   const qrLock = useRef(false);
   const appState = useRef(AppState.currentState);
-  const { addMeal } = useMealContext(); // Access the addMeal function from context
-  const router = useRouter(); // Access the router for navigation
+  const { setMealItem } = useMealContext(); 
+  const router = useRouter(); 
+  const [isScanning, setIsScanning] = useState(false); // Optional: Track scanning state
 
   useEffect(() => {
+    //Prevent the app to scan codes in the background
     const subscription = AppState.addEventListener("change", (nextAppState) => {
       if (
         appState.current.match(/inactive|background/) &&
@@ -38,25 +40,38 @@ export default function HomeScreen() {
   }, []);
 
   const handleBarcodeScanned = async ({ data }: { data: string }) => {
-    if (data && !qrLock.current) {
-      qrLock.current = true;
-      setTimeout(async () => {
-        try {
-          const productData = await fetchProductData(data); // Fetch product details based on barcode
+    if (data && !qrLock.current && !isScanning) {
+      qrLock.current = true; // Lock to prevent multiple scans
+      setIsScanning(true);
+      try {
+        const productData = await fetchProductData(data);
 
-          const newMeal : MealItem {
-            
-          }
+        if (productData?.product && productData?.product.nutriments) {
+          const nutriments = productData.product.nutriments;
 
-          /* addMeal(newMeal); */
+          // Map API response to a MealItem
+          const mealItem: MealItem = {
+            product_name: productData.product.product_name || "Unknown Product",
+            carbohydrates_value: nutriments.carbohydrates_value || 0,
+            proteins_value: nutriments.proteins_value || 0,
+            fat_value: nutriments.fat_value || 0,
+            "energy-kcal": nutriments["energy-kcal"] || 0,
+            amount: 0
+          };
 
-          router.navigate("/newMeal");
-        } catch (error) {
-          console.error("Error fetching product data:", error);
-        } finally {
-          qrLock.current = false; // Reset the lock
+          console.log("Mapped MealItem:", mealItem);
+          setMealItem(mealItem);
+          router.push("/newMeal");
+        } else {
+          console.error("Product data or nutriments missing");
+          setIsScanning(false);
         }
-      }, 500);
+      } catch (error) {
+        console.error("Error fetching product data:", error);
+        setIsScanning(false);
+      } finally {
+        qrLock.current = false; // Reset the lock after the operation completes
+      }
     }
   };
 

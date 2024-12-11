@@ -8,12 +8,14 @@ import { useMealContext } from "../../contexts/MealContext";
 
 export default function AddMeal() {
   const { meal } = useMealContext();
-  const { addMeal } = useMealContext();
-  const [newMeal, setNewMeal] = useState({
-    name: "",
-    carbs: 0,
-    protein: 0,
-    fats: 0,
+  const { addMeal, mealItem } = useMealContext();
+  const [newMeal, setNewMeal] = useState(mealItem || {
+    product_name: "",
+    "energy-kcal": 0,
+    carbohydrates_value: 0,
+    proteins_value: 0,
+    fat_value: 0,
+    amount: 0
   });
 
   const router = useRouter();
@@ -24,7 +26,7 @@ export default function AddMeal() {
 
   const handleAddMeal = () => {
     addMeal(newMeal); 
-    setNewMeal({ name: "", carbs: 0, protein: 0, fats: 0 }); 
+    setNewMeal({ product_name: "", "energy-kcal" : 0, carbohydrates_value: 0, proteins_value: 0, fat_value: 0, amount: 0 }); 
   };
 
   return (
@@ -32,29 +34,43 @@ export default function AddMeal() {
       <TextInput
         style={styles.input}
         placeholder="Meal Name"
-        value={newMeal.name}
-        onChangeText={(text) => setNewMeal({ ...newMeal, name: text })}
+        value={newMeal.product_name}
+        onChangeText={(text) => setNewMeal({ ...newMeal, product_name: text })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Energy"
+        keyboardType="numeric"
+        value={newMeal["energy-kcal"]?.toString()}
+        onChangeText={(text) => setNewMeal({ ...newMeal, "energy-kcal": parseInt(text) })}
       />
       <TextInput
         style={styles.input}
         placeholder="Carbs"
         keyboardType="numeric"
-        value={newMeal.carbs.toString()}
-        onChangeText={(text) => setNewMeal({ ...newMeal, carbs: parseInt(text) || 0 })}
+        value={newMeal.carbohydrates_value.toString()}
+        onChangeText={(text) => setNewMeal({ ...newMeal, carbohydrates_value: parseInt(text) || 0 })}
       />
       <TextInput
         style={styles.input}
         placeholder="Protein"
         keyboardType="numeric"
-        value={newMeal.protein.toString()}
-        onChangeText={(text) => setNewMeal({ ...newMeal, protein: parseInt(text) || 0 })}
+        value={newMeal.proteins_value.toString()}
+        onChangeText={(text) => setNewMeal({ ...newMeal, proteins_value: parseInt(text) || 0 })}
       />
       <TextInput
         style={styles.input}
         placeholder="Fats"
         keyboardType="numeric"
-        value={newMeal.fats.toString()}
-        onChangeText={(text) => setNewMeal({ ...newMeal, fats: parseInt(text) || 0 })}
+        value={newMeal.fat_value.toString()}
+        onChangeText={(text) => setNewMeal({ ...newMeal, fat_value: parseInt(text) || 0 })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Amount"
+        keyboardType="numeric"
+        value={newMeal.amount.toString()}
+        onChangeText={(text) => setNewMeal({ ...newMeal, amount: parseFloat(text) || 0 })}
       />
       <Button title="Add Meal" onPress={handleAddMeal} />
       <Pressable
@@ -71,10 +87,12 @@ export default function AddMeal() {
       keyExtractor={(item, index) => index.toString()}
       renderItem={({ item }) => (
         <View>
-          <Text>Name: {item.name}</Text>
-          <Text>Carbs: {item.carbs}</Text>
-          <Text>Protein: {item.protein}</Text>
-          <Text>Fats: {item.fats}</Text>
+          <Text>Name: {item.product_name}</Text>
+          <Text>Carbs: {item["energy-kcal"]}</Text>
+          <Text>Carbs: {item.carbohydrates_value}</Text>
+          <Text>Protein: {item.proteins_value}</Text>
+          <Text>Fats: {item.fat_value}</Text>
+          <Text>Amount: {item.amount}</Text>
         </View>
       )}
     />
