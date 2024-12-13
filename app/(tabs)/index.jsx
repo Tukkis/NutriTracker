@@ -1,12 +1,23 @@
 import { View, Text, StyleSheet, SafeAreaView, Pressable } from "react-native";
 import { Link, Stack } from "expo-router";
 
+import { useEffect, useState } from "react";
+
 import { useCameraPermissions } from "expo-camera";
+
+import { MealItem } from "@/types/interfaces";
+
+import { getUsersMeals } from '../../firebase/funcs/getUsersMeals'
 
 export default function Home() {
   const [permission, requestPermission] = useCameraPermissions();
+  const [meals, setMeals] = useState([])
 
-  const isPermissionGranted = Boolean(permission?.granted);
+  useEffect(() => {
+    getUsersMeals()
+  },[])
+
+/*   const isPermissionGranted = Boolean(permission?.granted); */
 
   return (
     <SafeAreaView style={styles.container}>

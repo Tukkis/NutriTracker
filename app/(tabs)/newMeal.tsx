@@ -6,10 +6,12 @@ import { useCameraPermissions } from "expo-camera";
 
 import { useMealContext } from "../../contexts/MealContext";
 
+import saveMeal from "@/firebase/saveMeal";
+
 export default function AddMeal() {
-  const { meal } = useMealContext();
+  const { meal, setMeal } = useMealContext();
   const { addMeal, mealItem } = useMealContext();
-  const [newMeal, setNewMeal] = useState(mealItem || {
+  const [newMealItem, setNewMealItem] = useState(mealItem || {
     product_name: "",
     "energy-kcal": 0,
     carbohydrates_value: 0,
@@ -20,68 +22,79 @@ export default function AddMeal() {
 
   const router = useRouter();
 
-  const handlePress = () => {
+  const handleNavigation = () => {
     router.navigate('/newMealPages')
   };
 
   const handleAddMeal = () => {
-    addMeal(newMeal); 
-    setNewMeal({ product_name: "", "energy-kcal" : 0, carbohydrates_value: 0, proteins_value: 0, fat_value: 0, amount: 0 }); 
+    addMeal(newMealItem); 
+    setNewMealItem({ product_name: "", "energy-kcal" : 0, carbohydrates_value: 0, proteins_value: 0, fat_value: 0, amount: 0 }); 
   };
+
+  const handleSaveMeal =() => {
+    if(meal.length > 0){
+      saveMeal(meal)
+      setMeal([])
+    }
+    else{
+      console.log("No meal");
+    }
+  }
 
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.input}
         placeholder="Meal Name"
-        value={newMeal.product_name}
-        onChangeText={(text) => setNewMeal({ ...newMeal, product_name: text })}
+        value={newMealItem.product_name}
+        onChangeText={(text) => setNewMealItem({ ...newMealItem, product_name: text })}
       />
       <TextInput
         style={styles.input}
         placeholder="Energy"
         keyboardType="numeric"
-        value={newMeal["energy-kcal"]?.toString()}
-        onChangeText={(text) => setNewMeal({ ...newMeal, "energy-kcal": parseInt(text) })}
+        value={newMealItem["energy-kcal"]?.toString()}
+        onChangeText={(text) => setNewMealItem({ ...newMealItem, "energy-kcal": parseInt(text) })}
       />
       <TextInput
         style={styles.input}
         placeholder="Carbs"
         keyboardType="numeric"
-        value={newMeal.carbohydrates_value.toString()}
-        onChangeText={(text) => setNewMeal({ ...newMeal, carbohydrates_value: parseInt(text) || 0 })}
+        value={newMealItem.carbohydrates_value.toString()}
+        onChangeText={(text) => setNewMealItem({ ...newMealItem, carbohydrates_value: parseInt(text) || 0 })}
       />
       <TextInput
         style={styles.input}
         placeholder="Protein"
         keyboardType="numeric"
-        value={newMeal.proteins_value.toString()}
-        onChangeText={(text) => setNewMeal({ ...newMeal, proteins_value: parseInt(text) || 0 })}
+        value={newMealItem.proteins_value.toString()}
+        onChangeText={(text) => setNewMealItem({ ...newMealItem, proteins_value: parseInt(text) || 0 })}
       />
       <TextInput
         style={styles.input}
         placeholder="Fats"
         keyboardType="numeric"
-        value={newMeal.fat_value.toString()}
-        onChangeText={(text) => setNewMeal({ ...newMeal, fat_value: parseInt(text) || 0 })}
+        value={newMealItem.fat_value.toString()}
+        onChangeText={(text) => setNewMealItem({ ...newMealItem, fat_value: parseInt(text) || 0 })}
       />
       <TextInput
         style={styles.input}
         placeholder="Amount"
         keyboardType="numeric"
-        value={newMeal.amount.toString()}
-        onChangeText={(text) => setNewMeal({ ...newMeal, amount: parseFloat(text) || 0 })}
+        value={newMealItem.amount.toString()}
+        onChangeText={(text) => setNewMealItem({ ...newMealItem, amount: parseFloat(text) || 0 })}
       />
       <Button title="Add Meal" onPress={handleAddMeal} />
+      <Button title="Save Meal" onPress={handleSaveMeal} />
       <Pressable
-      style={({ pressed }) => [
-        styles.button,
-        pressed && styles.buttonPressed,
-      ]}
-      onPress={(handlePress)} 
-    >
-      <Text style={styles.buttonText}>Scan Code</Text>
-    </Pressable>
+        style={({ pressed }) => [
+          styles.button,
+          pressed && styles.buttonPressed,
+        ]}
+        onPress={(handleNavigation)} 
+      >
+        <Text style={styles.buttonText}>Scan Code</Text>
+      </Pressable>
       <FlatList
       data={meal}
       keyExtractor={(item, index) => index.toString()}
