@@ -20,7 +20,7 @@ export async function getUsersMeals() {
         // Map the querySnapshot to an array of meal data
         const meals: MealItem[] = querySnapshot.docs.map(doc => ({
             id: doc.id,
-            ...doc.data().meals,
+            ...doc.data().meal,
         }));
 
         console.log("Meals for the current user:", meals);

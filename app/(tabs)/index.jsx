@@ -6,16 +6,24 @@ import { useEffect, useState } from "react";
 import { useCameraPermissions } from "expo-camera";
 
 import { MealItem } from "@/types/interfaces";
-
+import { usePathname } from "expo-router";
 import { getUsersMeals } from '../../firebase/funcs/getUsersMeals'
 
 export default function Home() {
   const [permission, requestPermission] = useCameraPermissions();
-  const [meals, setMeals] = useState([])
+  const [meals, setMeals] = useState([]);
+  
+  const path = usePathname();
 
   useEffect(() => {
-    getUsersMeals()
-  },[])
+    if (path === "/") {
+      getUsersMeals().then(meals => {
+        console.log("Resolved meals:", meals);
+      }).catch(error => {
+        console.error("Error:", error);
+      });
+    } 
+  }, [path])
 
 /*   const isPermissionGranted = Boolean(permission?.granted); */
 
