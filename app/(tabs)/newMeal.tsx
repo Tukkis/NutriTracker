@@ -2,8 +2,6 @@ import { useState } from "react";
 import { View, Text, TextInput, StyleSheet, SafeAreaView, Pressable, Button, FlatList } from "react-native";
 import { Link, useRouter } from "expo-router";
 
-import { useCameraPermissions } from "expo-camera";
-
 import { useMealContext } from "../../contexts/MealContext";
 
 import saveMeal from "@/firebase/saveMeal";
@@ -108,7 +106,7 @@ export default function AddMeal() {
           <Text>Amount: {item.amount}</Text>
         </View>
       )}
-    />
+      />
     </View>
   );
 }

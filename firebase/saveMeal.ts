@@ -8,8 +8,9 @@ export default async function saveMeal(meal: MealItem[]) {
     try {
         const userId : string | null = getCurrentUserId()
         const docRef = await addDoc(collection(db, "meals"), {
-            user: userId,
-            meal: meal
+            userId: userId,
+            meal: meal,
+            date: new Date()
         });
         console.log("Document successfully written!", docRef.id);
     } catch (error) {

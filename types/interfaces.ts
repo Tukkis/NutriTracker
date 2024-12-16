@@ -7,6 +7,13 @@ export interface MealItem {
     amount: number;
 }
 
+export interface UserMeal {
+    id: string;
+    meals: MealItem[];
+    userId: string;
+    date: Date;
+}
+
 export interface MealContextType {
     meal: MealItem[];
     setMeal: React.Dispatch<React.SetStateAction<MealItem[]>>;
