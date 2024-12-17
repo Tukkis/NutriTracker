@@ -1,8 +1,8 @@
 import { doc, addDoc, collection } from "firebase/firestore"; 
-import { db } from "./firestore";
-import { getCurrentUserId } from "./funcs/getCurrentUserId";
+import { db } from "../firestore";
+import { getCurrentUserId } from "./getCurrentUserId";
 import { MealItem } from "@/types/interfaces";
-import formatMealDate from "./helpers/formatMealDate";
+import formatMealDate from "../helpers/formatDate";
 
 
 

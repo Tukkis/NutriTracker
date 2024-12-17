@@ -1,8 +1,8 @@
-import { StyleSheet, SafeAreaView, Text, View } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, View, Pressable } from 'react-native';
 
 import { Nutrients } from '@/types/interfaces';
 import { useEffect, useState } from 'react';
-import { usePathname } from "expo-router";
+import { usePathname, useRouter } from "expo-router";
 import { getUsersMeals } from '@/firebase/funcs/getUsersMeals';
 
 export default function TabTwoScreen() {
@@ -15,6 +15,12 @@ export default function TabTwoScreen() {
   })
 
   const path = usePathname();
+
+  const router = useRouter();
+
+  const handleNavigation = () => {
+    router.navigate('/planPages/addPlan')
+  };
   
     useEffect(() => {
       if (path === "/explore") {
@@ -54,6 +60,15 @@ export default function TabTwoScreen() {
         <Text style={styles.text}></Text>
         <Text style={styles.text}></Text>
       </View>
+      <Pressable
+              style={({ pressed }) => [
+                styles.button,
+                pressed && styles.buttonPressed,
+              ]}
+              onPress={(handleNavigation)} 
+      >
+        <Text style={styles.buttonText}>add Plan</Text>
+      </Pressable>
     </SafeAreaView>
   );
 }
@@ -70,5 +85,20 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     justifyContent: "space-around",
     paddingVertical: 80,
+  },
+  button: {
+    backgroundColor: "#007BFF",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  buttonPressed: {
+    backgroundColor: "#0056b3",
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

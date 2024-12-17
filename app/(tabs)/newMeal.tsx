@@ -4,7 +4,7 @@ import { Link, useRouter } from "expo-router";
 
 import { useMealContext } from "../../contexts/MealContext";
 
-import saveMeal from "@/firebase/saveMeal";
+import saveMeal from "@/firebase/funcs/saveMeal";
 import { MealItem } from "@/types/interfaces";
 
 export default function AddMeal() {

@@ -24,13 +24,6 @@ export interface MealContextType {
     addMeal: (newMeal: MealItem) => void;
     removeMeal: (mealIndex: number) => void; 
 }
-  
-export interface Nutrients {
-    "energy-kcal": number;
-    carbohydrates_value: number;
-    proteins_value: number;
-    fat_value: number;
-}
 
 interface Product {
     product_name?: string;
@@ -46,11 +39,19 @@ export interface ApiResponse {
     product?: Product; 
 }
 
+export interface Nutrients {
+    "energy-kcal": number;
+    carbohydrates_value: number;
+    proteins_value: number;
+    fat_value: number;
+}
+
 export interface UserPlan {
     id: string;
     userId: string;
     startDate: Timestamp;
     endDate: Timestamp;
+    height: number;
     startingWeight: number;
     goalWeight: number;
     dailyNutrients: Nutrients;

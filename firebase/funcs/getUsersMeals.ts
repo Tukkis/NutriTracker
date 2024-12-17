@@ -2,7 +2,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firestore"; 
 import { getCurrentUserId } from "./getCurrentUserId"; 
 import { UserMeal, MealItem } from "@/types/interfaces"; 
-import formatMealDate from "../helpers/formatMealDate";
+import formatMealDate from "../helpers/formatDate";
 
 // Function to get meals for the current user
 export async function getUsersMeals(date?: Date) {
