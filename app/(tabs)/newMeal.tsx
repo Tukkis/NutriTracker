@@ -5,18 +5,11 @@ import { Link, useRouter } from "expo-router";
 import { useMealContext } from "../../contexts/MealContext";
 
 import saveMeal from "@/firebase/saveMeal";
+import { MealItem } from "@/types/interfaces";
 
 export default function AddMeal() {
   const { meal, setMeal } = useMealContext();
-  const { addMeal, mealItem } = useMealContext();
-  const [newMealItem, setNewMealItem] = useState(mealItem || {
-    product_name: "",
-    "energy-kcal": 0,
-    carbohydrates_value: 0,
-    proteins_value: 0,
-    fat_value: 0,
-    amount: 0
-  });
+  const { addMeal, mealItem, removeMeal, setMealItem } = useMealContext();
 
   const router = useRouter();
 
@@ -25,11 +18,15 @@ export default function AddMeal() {
   };
 
   const handleAddMeal = () => {
-    addMeal(newMealItem); 
-    setNewMealItem({ product_name: "", "energy-kcal" : 0, carbohydrates_value: 0, proteins_value: 0, fat_value: 0, amount: 0 }); 
+    addMeal(mealItem); 
+    setMealItem({ product_name: "", "energy-kcal" : 0, carbohydrates_value: 0, proteins_value: 0, fat_value: 0, amount: 0 }); 
   };
 
-  const handleSaveMeal =() => {
+    const handleRemoveMeal = (index: number) => {
+      removeMeal(index); 
+    };
+
+  const handleSaveMeal = () => {
     if(meal.length > 0){
       saveMeal(meal)
       setMeal([])
@@ -44,43 +41,43 @@ export default function AddMeal() {
       <TextInput
         style={styles.input}
         placeholder="Meal Name"
-        value={newMealItem.product_name}
-        onChangeText={(text) => setNewMealItem({ ...newMealItem, product_name: text })}
+        value={mealItem.product_name}
+        onChangeText={(text) => setMealItem({ ...mealItem, product_name: text })}
       />
       <TextInput
         style={styles.input}
         placeholder="Energy"
         keyboardType="numeric"
-        value={newMealItem["energy-kcal"]?.toString()}
-        onChangeText={(text) => setNewMealItem({ ...newMealItem, "energy-kcal": parseInt(text) })}
+        value={mealItem["energy-kcal"]?.toString()}
+        onChangeText={(text) => setMealItem({ ...mealItem, "energy-kcal": parseInt(text) })}
       />
       <TextInput
         style={styles.input}
         placeholder="Carbs"
         keyboardType="numeric"
-        value={newMealItem.carbohydrates_value.toString()}
-        onChangeText={(text) => setNewMealItem({ ...newMealItem, carbohydrates_value: parseInt(text) || 0 })}
+        value={mealItem.carbohydrates_value.toString()}
+        onChangeText={(text) => setMealItem({ ...mealItem, carbohydrates_value: parseInt(text) || 0 })}
       />
       <TextInput
         style={styles.input}
         placeholder="Protein"
         keyboardType="numeric"
-        value={newMealItem.proteins_value.toString()}
-        onChangeText={(text) => setNewMealItem({ ...newMealItem, proteins_value: parseInt(text) || 0 })}
+        value={mealItem.proteins_value.toString()}
+        onChangeText={(text) => setMealItem({ ...mealItem, proteins_value: parseInt(text) || 0 })}
       />
       <TextInput
         style={styles.input}
         placeholder="Fats"
         keyboardType="numeric"
-        value={newMealItem.fat_value.toString()}
-        onChangeText={(text) => setNewMealItem({ ...newMealItem, fat_value: parseInt(text) || 0 })}
+        value={mealItem.fat_value.toString()}
+        onChangeText={(text) => setMealItem({ ...mealItem, fat_value: parseInt(text) || 0 })}
       />
       <TextInput
         style={styles.input}
         placeholder="Amount"
         keyboardType="numeric"
-        value={newMealItem.amount.toString()}
-        onChangeText={(text) => setNewMealItem({ ...newMealItem, amount: parseFloat(text) || 0 })}
+        value={mealItem.amount.toString()}
+        onChangeText={(text) => setMealItem({ ...mealItem, amount: parseFloat(text) || 0 })}
       />
       <Button title="Add Meal" onPress={handleAddMeal} />
       <Button title="Save Meal" onPress={handleSaveMeal} />
@@ -96,7 +93,7 @@ export default function AddMeal() {
       <FlatList
       data={meal}
       keyExtractor={(item, index) => index.toString()}
-      renderItem={({ item }) => (
+      renderItem={({ item, index }) => (
         <View>
           <Text>Name: {item.product_name}</Text>
           <Text>Carbs: {item["energy-kcal"]}</Text>
@@ -104,6 +101,7 @@ export default function AddMeal() {
           <Text>Protein: {item.proteins_value}</Text>
           <Text>Fats: {item.fat_value}</Text>
           <Text>Amount: {item.amount}</Text>
+          <Button title="Remove Meal" onPress={() => handleRemoveMeal(Number(index))}  />
         </View>
       )}
       />

@@ -19,9 +19,13 @@ export const MealProvider = ({ children }: { children: ReactNode }) => {
   const addMeal = (newMeal: MealItem) => {
     setMeal((prevMeals) => [...prevMeals, newMeal]);
   };
+  
+  const removeMeal = (mealIndex: number) => {
+    setMeal((prevMeals) => prevMeals.filter((_, index) => index !== mealIndex));
+  };
 
   return (
-    <MealContext.Provider value={{ meal, setMeal, mealItem, setMealItem, addMeal }}>
+    <MealContext.Provider value={{ meal, setMeal, mealItem, setMealItem, addMeal, removeMeal }}>
       {children}
     </MealContext.Provider>
   );

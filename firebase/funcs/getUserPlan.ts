@@ -5,7 +5,7 @@ import { UserMeal, MealItem } from "@/types/interfaces";
 import formatMealDate from "../helpers/formatMealDate";
 
 // Function to get meals for the current user
-export async function getUsersMeals(date?: Date) {
+export async function getUsersPlan() {
     try {
         const usersId: string | null = getCurrentUserId();
         if (!usersId) {
@@ -13,24 +13,12 @@ export async function getUsersMeals(date?: Date) {
             return [];
         }
 
-        let mealQuery;
+        const planQuery = query(
+            collection(db, "plans"),
+            where("userId", "==", usersId)
+        );
 
-        if (date) {
-            // Calculate start and end of the current day
-
-            mealQuery = query(
-                collection(db, "meals"),
-                where("userId", "==", usersId),
-                where("date", "==", formatMealDate(date))
-            );
-        } else {
-            mealQuery = query(
-                collection(db, "meals"),
-                where("userId", "==", usersId)
-            );
-        }
-
-        const querySnapshot = await getDocs(mealQuery);
+        const querySnapshot = await getDocs(planQuery);
 
         const meals: UserMeal[] = querySnapshot.docs.map(doc => {
             const data = doc.data();
