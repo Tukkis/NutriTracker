@@ -1,96 +1,215 @@
-import { View, Text, TextInput, StyleSheet, SafeAreaView, Pressable, Button, FlatList } from "react-native";
-import { Nutrients } from "@/types/interfaces";
+import { View, Text, TextInput, StyleSheet, SafeAreaView, Button, Platform } from "react-native";
 import { useState } from "react";
+import { Picker } from "@react-native-picker/picker";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { PlanData } from "@/types/interfaces"; // Ensure PlanData interface is properly defined
+
+const localDate = new Date();
+localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset());
 
 export default function AddPlan() {
+  const [plan, setPlan] = useState<PlanData>({
+    startDate: localDate,
+    endDate: localDate,
+    startingWeight: 0,
+    goalWeight: 0,
+    height: 0,
+    age: 0,
+    gender: "male",
+    activity: "sedentary",
+  });
 
-    const [plan, setPlan] = useState({
-        startDate: new Date(),
-        endDate: new Date(),
-        startingWeight: 0,
-        goalWeight: 0,
-        height: 0,
-    });
+  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
 
-    // Generic handler for updating state fields
-    const handleInputChange = (key: string, value: any) => {
+  const handleInputChange = <K extends keyof PlanData>(key: K, value: PlanData[K]) => {
     setPlan((prev) => ({ ...prev, [key]: value }));
-    };
+  };
 
-    const handleSavePlan = () => {
-    console.log('Plan Saved:', plan);
-    };
+  const handleDateChange = (key: keyof PlanData, date: Date | undefined) => {
+    if (date) {
+      // Ensure the date is in local time
+      const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000); 
+      handleInputChange(key, localDate); // Set the state with the corrected local time date
+    }
+    if (key === "startDate") {
+      setShowStartDatePicker(false);
+    } else if (key === "endDate") {
+      setShowEndDatePicker(false);
+    }
+  };
 
-    return (
+  const validatePlan = (): boolean => {
+    if (!plan.startDate || !plan.endDate || plan.startDate > plan.endDate) {
+      console.error("Invalid date range.");
+      return false;
+    }
+    if (plan.startingWeight <= 0 || plan.goalWeight <= 0 || plan.height <= 0 || plan.age <= 0) {
+      console.error("All numeric fields must be greater than 0.");
+      return false;
+    }
+    if (!plan.gender || !plan.activity) {
+      console.error("Gender and activity must be selected.");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSavePlan = () => {
+    if (validatePlan()) {
+      console.log("Plan Saved:", plan);
+    } else {
+      console.log("Plan validation failed.");
+    }
+  };
+
+  return (
     <SafeAreaView style={styles.container}>
-        {/* Start Date */}
-        <TextInput
-        style={styles.input}
-        placeholder="Start Date (YYYY-MM-DD)"
-        value={plan.startDate.toISOString().split('T')[0]}
-        onChangeText={(text) => handleInputChange('startDate', new Date(text))}
+      {/* Start Date */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Start Date:</Text>
+        <Button
+          title={plan.startDate.toISOString().split("T")[0]}
+          onPress={() => setShowStartDatePicker(true)}
         />
+        {showStartDatePicker && (
+          <DateTimePicker
+            value={plan.startDate}
+            mode="date"
+            display={Platform.OS === "ios" ? "spinner" : "default"}
+            onChange={(event, date) => handleDateChange("startDate", date)}
+          />
+        )}
+      </View>
 
-        {/* End Date */}
-        <TextInput
-        style={styles.input}
-        placeholder="End Date (YYYY-MM-DD)"
-        value={plan.endDate.toISOString().split('T')[0]}
-        onChangeText={(text) => handleInputChange('endDate', new Date(text))}
+      {/* End Date */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>End Date:</Text>
+        <Button
+          title={plan.endDate.toISOString().split("T")[0]}
+          onPress={() => setShowEndDatePicker(true)}
         />
+        {showEndDatePicker && (
+          <DateTimePicker
+            value={plan.endDate}
+            mode="date"
+            display={Platform.OS === "ios" ? "spinner" : "default"}
+            onChange={(event, date) => handleDateChange("endDate", date)}
+          />
+        )}
+      </View>
 
-        {/* Starting Weight */}
+      {/* Starting Weight */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Starting Weight (kg):</Text>
         <TextInput
-        style={styles.input}
-        placeholder="Starting Weight"
-        keyboardType="numeric"
-        value={plan.startingWeight.toString()}
-        onChangeText={(text) =>
-            handleInputChange('startingWeight', parseFloat(text) || 0)
-        }
+          style={styles.input}
+          keyboardType="numeric"
+          value={plan.startingWeight.toString()}
+          onChangeText={(text) =>
+            handleInputChange("startingWeight", parseFloat(text) || 0)
+          }
         />
+      </View>
 
-        {/* Goal Weight */}
+      {/* Goal Weight */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Goal Weight (kg):</Text>
         <TextInput
-        style={styles.input}
-        placeholder="Goal Weight"
-        keyboardType="numeric"
-        value={plan.goalWeight.toString()}
-        onChangeText={(text) =>
-            handleInputChange('goalWeight', parseFloat(text) || 0)
-        }
+          style={styles.input}
+          keyboardType="numeric"
+          value={plan.goalWeight.toString()}
+          onChangeText={(text) =>
+            handleInputChange("goalWeight", parseFloat(text) || 0)
+          }
         />
+      </View>
 
-        {/* Height */}
+      {/* Height */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Height (cm):</Text>
         <TextInput
-        style={styles.input}
-        placeholder="Height"
-        keyboardType="numeric"
-        value={plan.height.toString()}
-        onChangeText={(text) =>
-            handleInputChange('height', parseFloat(text) || 0)
-        }
+          style={styles.input}
+          keyboardType="numeric"
+          value={plan.height.toString()}
+          onChangeText={(text) =>
+            handleInputChange("height", parseFloat(text) || 0)
+          }
         />
+      </View>
 
-        {/* Save Button */}
-        <Button title="Save Plan" onPress={handleSavePlan} />
+      {/* Age */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Age:</Text>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          value={plan.age.toString()}
+          onChangeText={(text) => handleInputChange("age", parseInt(text) || 0)}
+        />
+      </View>
+
+      {/* Gender */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Gender:</Text>
+        <Picker
+          selectedValue={plan.gender}
+          onValueChange={(value) => handleInputChange("gender", value)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Gender" value="" />
+          <Picker.Item label="Male" value="male" />
+          <Picker.Item label="Female" value="female" />
+          <Picker.Item label="Other" value="other" />
+        </Picker>
+      </View>
+
+      {/* Activity */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Activity Level:</Text>
+        <Picker
+          selectedValue={plan.activity}
+          onValueChange={(value) => handleInputChange("activity", value)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Activity Level" value="" />
+          <Picker.Item label="Sedentary" value="sedentary" />
+          <Picker.Item label="Lightly Active" value="lightly_active" />
+          <Picker.Item label="Moderately Active" value="moderately_active" />
+          <Picker.Item label="Very Active" value="very_active" />
+          <Picker.Item label="Super Active" value="super_active" />
+        </Picker>
+      </View>
+
+      {/* Save Button */}
+      <Button title="Save Plan" onPress={handleSavePlan} />
     </SafeAreaView>
   );
-};
+}
 
 // Example styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: 'center',
-    backgroundColor: 'white'
+    justifyContent: "center",
+    backgroundColor: "white",
+  },
+  inputContainer: {
+    marginBottom: 12,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 4,
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
-    marginBottom: 12,
     paddingLeft: 8,
+  },
+  picker: {
+    height: 50,
+    width: "100%",
   },
 });

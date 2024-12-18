@@ -46,13 +46,28 @@ export interface Nutrients {
     fat_value: number;
 }
 
+type Gender = "male" | "female" | "other";
+type ActivityLevel =
+  | "sedentary"
+  | "lightly_active"
+  | "moderately_active"
+  | "very_active"
+  | "super_active";
+
+export interface PlanData {
+    startDate: Date;
+    endDate: Date;
+    startingWeight: number;
+    goalWeight: number;
+    height: number;
+    age: number;
+    gender: Gender; 
+    activity: ActivityLevel; 
+  }
+
 export interface UserPlan {
     id: string;
     userId: string;
-    startDate: Timestamp;
-    endDate: Timestamp;
-    height: number;
-    startingWeight: number;
-    goalWeight: number;
+    planData: PlanData;
     dailyNutrients: Nutrients;
 }
