@@ -63,7 +63,7 @@ export default function AddPlan() {
   const handleSavePlan = () => {
     if (validatePlan()) {
       savePlan(plan)
-      router.push("./index");
+      router.push("/explore");
     } else {
       console.log("Plan validation failed.");
     }

@@ -13,19 +13,6 @@ export default function AddMeal() {
 
   const router = useRouter();
 
-  const handleNavigation = () => {
-    router.navigate('/newMealPages');
-  };
-
-  const handleAddMeal = () => {
-    addMeal(mealItem); 
-    setMealItem({ product_name: "", "energy-kcal": 0, carbohydrates_value: 0, proteins_value: 0, fat_value: 0, amount: 0 }); 
-  };
-
-  const handleRemoveMeal = (index: number) => {
-    removeMeal(index); 
-  };
-
   const validateMeal = (): boolean => {
     if (!mealItem.product_name) {
       console.error("Product name is required.");
@@ -38,16 +25,29 @@ export default function AddMeal() {
     return true;
   };
 
-  const handleSaveMeal = () => {
-    if (validateMeal()) {
-      if (meal.length > 0) {
-        saveMeal(meal);
-        setMeal([]);
-      } else {
-        console.error("No meal to save.");
-      }
+  const handleNavigation = () => {
+    router.navigate('/newMealPages');
+  };
+
+  const handleAddMeal = () => {
+    if(validateMeal()){
+      addMeal(mealItem); 
+      setMealItem({ product_name: "", "energy-kcal": 0, carbohydrates_value: 0, proteins_value: 0, fat_value: 0, amount: 0 }); 
     } else {
-      console.error("Meal validation failed.");
+      console.error("Meal validation failed")
+    }
+  };
+
+  const handleRemoveMeal = (index: number) => {
+    removeMeal(index); 
+  };
+
+  const handleSaveMeal = () => {
+    if (meal.length > 0) {
+      saveMeal(meal);
+      setMeal([]);
+    } else {
+      console.error("No meal to save.");
     }
   };
 

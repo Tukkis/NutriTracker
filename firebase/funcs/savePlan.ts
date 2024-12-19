@@ -1,4 +1,4 @@
-import { doc, addDoc, collection } from "firebase/firestore"; 
+import { doc, setDoc, collection, addDoc } from "firebase/firestore";
 import { db } from "../firestore";
 import { getCurrentUserId } from "./getCurrentUserId";
 import { PlanData, Nutrients } from "@/types/interfaces";
@@ -13,17 +13,27 @@ export default async function savePlan(plan: PlanData) {
         if (!userId) {
             throw new Error("User not authenticated.");
         }
-        const nutrients : Nutrients = calculateDailyNutrients(plan)
+
+        // Calculate daily nutrients
+        const nutrients: Nutrients = calculateDailyNutrients(plan);
+
+        // Format the plan data
         const formattedPlan = {
             ...plan,
-            startDate: startDate, 
-            endDate: endDate,    
+            startDate,
+            endDate,
         };
-        const docRef = await addDoc(collection(db, "plans"), {
-            userId: userId,
+
+        // Reference to the user's plans subcollection
+        const userPlansCollectionRef = collection(db, `users/${userId}/plans`);
+
+        // Add the plan document to the subcollection
+        const docRef = await addDoc(userPlansCollectionRef, {
+            userId,
             plan: formattedPlan,
-            dailyNutrients: nutrients
+            dailyNutrients: nutrients,
         });
+
         console.log("Document successfully written!", docRef.id);
     } catch (error) {
         console.error("Error writing document: ", error);
