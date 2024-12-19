@@ -1,12 +1,14 @@
 import { StyleSheet, SafeAreaView, Text, View, Pressable } from 'react-native';
 
-import { Nutrients } from '@/types/interfaces';
+import { Nutrients, UserPlan } from '@/types/interfaces';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from "expo-router";
 import { getUsersMeals } from '@/firebase/funcs/getUsersMeals';
 import { getUsersPlans } from '@/firebase/funcs/getUserPlans';
 
 export default function TabTwoScreen() {
+
+  const [usersPlans, setUsersPlans] = useState<UserPlan[]>([])
 
   const [todaysNutrients, setTodaysNutrients] = useState<Nutrients>({
     "energy-kcal": 0,
@@ -25,6 +27,12 @@ export default function TabTwoScreen() {
   
     useEffect(() => {
       if (path === "/explore") {
+        getUsersPlans().then(fetchedPlans => {
+          console.log(fetchedPlans)
+          setUsersPlans(fetchedPlans)
+        }).catch(error => {
+          console.error("Error:", error);
+        });
         getUsersMeals(new Date()).then(fetchedMeals => {
           const allMeals = fetchedMeals.flatMap(mealData => mealData.meals);
 
