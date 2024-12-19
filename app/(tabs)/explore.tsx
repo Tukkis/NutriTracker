@@ -4,6 +4,7 @@ import { Nutrients } from '@/types/interfaces';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from "expo-router";
 import { getUsersMeals } from '@/firebase/funcs/getUsersMeals';
+import { getUsersPlans } from '@/firebase/funcs/getUserPlans';
 
 export default function TabTwoScreen() {
 

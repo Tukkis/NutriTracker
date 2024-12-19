@@ -4,9 +4,6 @@ import { getCurrentUserId } from "./getCurrentUserId";
 import { MealItem } from "@/types/interfaces";
 import formatMealDate from "../helpers/formatDate";
 
-
-
-// Add a new document in collection "cities"
 export default async function saveMeal(meal: MealItem[]) {
     try {
         const mealDate: string = formatMealDate(new Date());

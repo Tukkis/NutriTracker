@@ -2,7 +2,9 @@ import { View, Text, TextInput, StyleSheet, SafeAreaView, Button, Platform } fro
 import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { PlanData } from "@/types/interfaces"; // Ensure PlanData interface is properly defined
+import { PlanData } from "@/types/interfaces";
+import savePlan from "@/firebase/funcs/savePlan";
+import { useRouter } from "expo-router";
 
 const localDate = new Date();
 localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset());
@@ -17,10 +19,13 @@ export default function AddPlan() {
     age: 0,
     gender: "male",
     activity: "sedentary",
+    goal: "fat_loss"
   });
 
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+
+  const router = useRouter(); 
 
   const handleInputChange = <K extends keyof PlanData>(key: K, value: PlanData[K]) => {
     setPlan((prev) => ({ ...prev, [key]: value }));
@@ -48,8 +53,8 @@ export default function AddPlan() {
       console.error("All numeric fields must be greater than 0.");
       return false;
     }
-    if (!plan.gender || !plan.activity) {
-      console.error("Gender and activity must be selected.");
+    if (!plan.gender || !plan.activity || !plan.goal) {
+      console.error("Gender, activity and goal must be selected.");
       return false;
     }
     return true;
@@ -57,7 +62,8 @@ export default function AddPlan() {
 
   const handleSavePlan = () => {
     if (validatePlan()) {
-      console.log("Plan Saved:", plan);
+      savePlan(plan)
+      router.push("./index");
     } else {
       console.log("Plan validation failed.");
     }
@@ -178,6 +184,21 @@ export default function AddPlan() {
           <Picker.Item label="Moderately Active" value="moderately_active" />
           <Picker.Item label="Very Active" value="very_active" />
           <Picker.Item label="Super Active" value="super_active" />
+        </Picker>
+      </View>
+
+      {/* Goal */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Plan goal:</Text>
+        <Picker
+          selectedValue={plan.goal}
+          onValueChange={(value) => handleInputChange("goal", value)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Your Goal" value="" />
+          <Picker.Item label="Fat Loss" value="fat_loss" />
+          <Picker.Item label="Muscle Gain" value="muscle_gain" />
+          <Picker.Item label="Maintanance" value="maintenance" />
         </Picker>
       </View>
 

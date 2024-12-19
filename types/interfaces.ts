@@ -46,8 +46,9 @@ export interface Nutrients {
     fat_value: number;
 }
 
-type Gender = "male" | "female" | "other";
-type ActivityLevel =
+export type PlanGoal = "fat_loss" | "muscle_gain" | "maintenance";
+export type Gender = "male" | "female" | "other";
+export type ActivityLevel =
   | "sedentary"
   | "lightly_active"
   | "moderately_active"
@@ -63,7 +64,8 @@ export interface PlanData {
     age: number;
     gender: Gender; 
     activity: ActivityLevel; 
-  }
+    goal: PlanGoal;
+}
 
 export interface UserPlan {
     id: string;

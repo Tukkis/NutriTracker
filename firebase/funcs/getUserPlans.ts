@@ -1,11 +1,10 @@
 import { collection, query, where, getDocs } from "firebase/firestore"; 
 import { db } from "../firestore"; 
 import { getCurrentUserId } from "./getCurrentUserId"; 
-import { UserMeal, MealItem } from "@/types/interfaces"; 
-import formatMealDate from "../helpers/formatDate";
+import { UserPlan, PlanData, Nutrients } from "@/types/interfaces"; 
 
 // Function to get meals for the current user
-export async function getUsersPlan() {
+export async function getUsersPlans() {
     try {
         const usersId: string | null = getCurrentUserId();
         if (!usersId) {
@@ -20,17 +19,17 @@ export async function getUsersPlan() {
 
         const querySnapshot = await getDocs(planQuery);
 
-        const meals: UserMeal[] = querySnapshot.docs.map(doc => {
+        const plans: UserPlan[] = querySnapshot.docs.map(doc => {
             const data = doc.data();
             return {
                 id: doc.id,
-                meals: data.meal as MealItem[],  
-                date: data.date, 
-                userId: data.userId
+                planData: data.plan as PlanData,  
+                userId: data.userId,
+                dailyNutrients: data.nutrients as Nutrients
             };
         });
 
-        return meals;
+        return plans;
     } catch (error) {
         return [];
     }
