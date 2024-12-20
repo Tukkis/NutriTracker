@@ -3,19 +3,18 @@ import { ActivityLevel, PlanData, Nutrients } from "@/types/interfaces";
 function calculateDailyNutrients(plan: PlanData): Nutrients {
     const { gender, age, height, startingWeight, activity, intensity, goal } = plan;
 
-    let intensityModifier : number;
-    if (intensity === "hard" && goal === "fat_loss") {
-        intensityModifier = 0.85
-    } else if (intensity === "moderate" && goal === "fat_loss"){
-        intensityModifier = 0.92
-    }else if(intensity === "hard" && goal === "muscle_gain"){
-        intensityModifier = 1.15
-    } else if(intensity === "moderate" && goal === "muscle_gain"){
-        intensityModifier = 1.07
-    } else {
-        intensityModifier = 1
-    }
+    const intensityModifiers: { [key: string]: number } = {
+        "hard_fat_loss": 0.85,
+        "moderate_fat_loss": 0.90,
+        "easy_fat_loss": 0.95,
+        "hard_muscle_gain": 1.15,
+        "moderate_muscle_gain": 1.10,
+        "easy_muscle_gain": 1.05,
+        "default": 1, // for any case not matched
+    };
 
+    const key = `${intensity}_${goal}`;  // Create a key based on intensity and goal
+    const intensityModifier = intensityModifiers[key] || intensityModifiers["default"];
 
     // Calculate BMR (Basal Metabolic Rate)
     let bmr: number;
@@ -46,15 +45,15 @@ function calculateDailyNutrients(plan: PlanData): Nutrients {
     let fatPercentage: number;
 
     if (goal === "fat_loss") {
-        carbohydratesPercentage = 40; // Lower carbs
-        proteinsPercentage = 30;      // Higher protein
-        fatPercentage = 30;           // Moderate fats
+        carbohydratesPercentage = 40; 
+        proteinsPercentage = 30;      
+        fatPercentage = 30;           
     } else if (goal === "muscle_gain") {
-        carbohydratesPercentage = 46; // Higher carbs
-        proteinsPercentage = 26;      // Higher protein
-        fatPercentage = 28;           // Lower fats
-    } else { // Maintenance
-        carbohydratesPercentage = 45; // Balanced
+        carbohydratesPercentage = 46; 
+        proteinsPercentage = 26;      
+        fatPercentage = 28;           
+    } else { 
+        carbohydratesPercentage = 45; 
         proteinsPercentage = 30;
         fatPercentage = 25;
     }
