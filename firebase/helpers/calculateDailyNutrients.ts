@@ -1,10 +1,21 @@
 import { ActivityLevel, PlanData, Nutrients } from "@/types/interfaces";
 
 function calculateDailyNutrients(plan: PlanData): Nutrients {
-    const { gender, age, height, startingWeight, goalWeight, activity, startDate, endDate, goal } = plan;
+    const { gender, age, height, startingWeight, activity, intensity, goal } = plan;
 
-    // Calculate the duration of the plan in days
-    const planDurationDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+    let intensityModifier : number;
+    if (intensity === "hard" && goal === "fat_loss") {
+        intensityModifier = 0.85
+    } else if (intensity === "moderate" && goal === "fat_loss"){
+        intensityModifier = 0.92
+    }else if(intensity === "hard" && goal === "muscle_gain"){
+        intensityModifier = 1.15
+    } else if(intensity === "moderate" && goal === "muscle_gain"){
+        intensityModifier = 1.07
+    } else {
+        intensityModifier = 1
+    }
+
 
     // Calculate BMR (Basal Metabolic Rate)
     let bmr: number;
@@ -26,17 +37,8 @@ function calculateDailyNutrients(plan: PlanData): Nutrients {
     };
     const adjustedCalories = bmr * activityMultiplier[activity];
 
-    // Calculate total weight change (in kilograms)
-    const weightChange = startingWeight - goalWeight; // Positive for weight loss, negative for gain
-
-    // Convert weight change to calorie deficit/surplus (1 kg ~ 7700 kcal)
-    const totalCalorieAdjustment = weightChange * 7700;
-
-    // Daily calorie adjustment based on plan duration
-    const dailyCalorieAdjustment = totalCalorieAdjustment / planDurationDays;
-
     // Final adjusted calories
-    const finalCalories = adjustedCalories - dailyCalorieAdjustment;
+    const finalCalories = adjustedCalories * intensityModifier;
 
     // Macronutrient distribution
     let carbohydratesPercentage: number;

@@ -46,6 +46,7 @@ export interface Nutrients {
     fat_value: number;
 }
 
+export type PlanIntensity = "easy" | "moderate" | "hard";
 export type PlanGoal = "fat_loss" | "muscle_gain" | "maintenance";
 export type Gender = "male" | "female" | "other";
 export type ActivityLevel =
@@ -56,10 +57,8 @@ export type ActivityLevel =
   | "super_active";
 
 export interface PlanData {
-    startDate: Date;
-    endDate: Date;
+    intensity: PlanIntensity;
     startingWeight: number;
-    goalWeight: number;
     height: number;
     age: number;
     gender: Gender; 

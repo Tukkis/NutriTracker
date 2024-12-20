@@ -40,8 +40,7 @@ export default function TabTwoScreen() {
     <View style={styles.planItem}>
       <Text style={styles.planTitle}>Plan ID: {item.id}</Text>
       <Text>Goal: {item.planData.goal}</Text>
-      <Text>Start Date: {item.planData.startDate.toDateString()}</Text>
-      <Text>End Date: {item.planData.endDate.toDateString()}</Text>
+      <Text>Intensity: {item.planData.intensity}</Text>
       <Text>Daily Calories: {item.dailyNutrients?.["energy-kcal"]} kcal</Text>
     </View>
   )

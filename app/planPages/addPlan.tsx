@@ -1,7 +1,6 @@
 import { View, Text, TextInput, StyleSheet, SafeAreaView, Button, Platform } from "react-native";
 import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { PlanData } from "@/types/interfaces";
 import savePlan from "@/firebase/funcs/savePlan";
 import { useRouter } from "expo-router";
@@ -11,10 +10,8 @@ localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset());
 
 export default function AddPlan() {
   const [plan, setPlan] = useState<PlanData>({
-    startDate: localDate,
-    endDate: localDate,
+    intensity: "moderate", // Default intensity
     startingWeight: 0,
-    goalWeight: 0,
     height: 0,
     age: 0,
     gender: "male",
@@ -22,39 +19,19 @@ export default function AddPlan() {
     goal: "fat_loss"
   });
 
-  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
-  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-
   const router = useRouter(); 
 
   const handleInputChange = <K extends keyof PlanData>(key: K, value: PlanData[K]) => {
     setPlan((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleDateChange = (key: keyof PlanData, date: Date | undefined) => {
-    if (date) {
-      // Ensure the date is in local time
-      const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000); 
-      handleInputChange(key, localDate); // Set the state with the corrected local time date
-    }
-    if (key === "startDate") {
-      setShowStartDatePicker(false);
-    } else if (key === "endDate") {
-      setShowEndDatePicker(false);
-    }
-  };
-
   const validatePlan = (): boolean => {
-    if (!plan.startDate || !plan.endDate || plan.startDate > plan.endDate) {
-      console.error("Invalid date range.");
-      return false;
-    }
-    if (plan.startingWeight <= 0 || plan.goalWeight <= 0 || plan.height <= 0 || plan.age <= 0) {
+    if (plan.startingWeight <= 0 || plan.height <= 0 || plan.age <= 0) {
       console.error("All numeric fields must be greater than 0.");
       return false;
     }
-    if (!plan.gender || !plan.activity || !plan.goal) {
-      console.error("Gender, activity and goal must be selected.");
+    if (!plan.gender || !plan.activity || !plan.goal || !plan.intensity) {
+      console.error("Gender, activity, goal, and intensity must be selected.");
       return false;
     }
     return true;
@@ -62,7 +39,7 @@ export default function AddPlan() {
 
   const handleSavePlan = () => {
     if (validatePlan()) {
-      savePlan(plan)
+      savePlan(plan);
       router.push("/explore");
     } else {
       console.log("Plan validation failed.");
@@ -71,40 +48,6 @@ export default function AddPlan() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Start Date */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Start Date:</Text>
-        <Button
-          title={plan.startDate.toISOString().split("T")[0]}
-          onPress={() => setShowStartDatePicker(true)}
-        />
-        {showStartDatePicker && (
-          <DateTimePicker
-            value={plan.startDate}
-            mode="date"
-            display={Platform.OS === "ios" ? "spinner" : "default"}
-            onChange={(event, date) => handleDateChange("startDate", date)}
-          />
-        )}
-      </View>
-
-      {/* End Date */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>End Date:</Text>
-        <Button
-          title={plan.endDate.toISOString().split("T")[0]}
-          onPress={() => setShowEndDatePicker(true)}
-        />
-        {showEndDatePicker && (
-          <DateTimePicker
-            value={plan.endDate}
-            mode="date"
-            display={Platform.OS === "ios" ? "spinner" : "default"}
-            onChange={(event, date) => handleDateChange("endDate", date)}
-          />
-        )}
-      </View>
-
       {/* Starting Weight */}
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Starting Weight (kg):</Text>
@@ -114,19 +57,6 @@ export default function AddPlan() {
           value={plan.startingWeight.toString()}
           onChangeText={(text) =>
             handleInputChange("startingWeight", parseFloat(text) || 0)
-          }
-        />
-      </View>
-
-      {/* Goal Weight */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Goal Weight (kg):</Text>
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={plan.goalWeight.toString()}
-          onChangeText={(text) =>
-            handleInputChange("goalWeight", parseFloat(text) || 0)
           }
         />
       </View>
@@ -170,7 +100,7 @@ export default function AddPlan() {
         </Picker>
       </View>
 
-      {/* Activity */}
+      {/* Activity Level */}
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Activity Level:</Text>
         <Picker
@@ -187,7 +117,7 @@ export default function AddPlan() {
         </Picker>
       </View>
 
-      {/* Goal */}
+      {/* Plan Goal */}
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Plan goal:</Text>
         <Picker
@@ -198,7 +128,21 @@ export default function AddPlan() {
           <Picker.Item label="Select Your Goal" value="" />
           <Picker.Item label="Fat Loss" value="fat_loss" />
           <Picker.Item label="Muscle Gain" value="muscle_gain" />
-          <Picker.Item label="Maintanance" value="maintenance" />
+          <Picker.Item label="Maintenance" value="maintenance" />
+        </Picker>
+      </View>
+
+      {/* Plan Intensity */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Diet Intensity:</Text>
+        <Picker
+          selectedValue={plan.intensity}
+          onValueChange={(value) => handleInputChange("intensity", value)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Easy" value="easy" />
+          <Picker.Item label="Moderate" value="moderate" />
+          <Picker.Item label="Hard" value="hard" />
         </Picker>
       </View>
 
