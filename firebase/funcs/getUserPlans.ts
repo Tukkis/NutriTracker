@@ -3,7 +3,11 @@ import { db } from "../firestore";
 import { getCurrentUserId } from "./getCurrentUserId";
 import { UserPlan, PlanData, Nutrients } from "@/types/interfaces";
 
-// Function to get plans for the current user
+const parseDateFromString = (dateString: string): Date => {
+    const [day, month, year] = dateString.split("/").map(Number);
+    return new Date(year, month - 1, day); 
+  };
+
 export async function getUsersPlans() {
     try {
         const usersId: string | null = getCurrentUserId();
@@ -23,11 +27,18 @@ export async function getUsersPlans() {
         // Map the documents to the UserPlan type
         const plans: UserPlan[] = querySnapshot.docs.map(doc => {
             const data = doc.data();
+            const startDate = parseDateFromString(data.plan.startDate);
+            const endDate = parseDateFromString(data.plan.endDate);
+            
             return {
-                id: doc.id,
-                planData: data.plan as PlanData,
-                userId: usersId, // Use the current user ID
-                dailyNutrients: data.nutrients as Nutrients
+              id: doc.id,
+              planData: {
+                ...data.plan,
+                startDate,
+                endDate,
+              } as PlanData,
+              userId: usersId, // Use the current user ID
+              dailyNutrients: data.dailyNutrients as Nutrients,
             };
         });
 

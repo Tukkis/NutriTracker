@@ -1,21 +1,16 @@
-import { StyleSheet, SafeAreaView, Text, View, Pressable } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, View, Pressable, FlatList } from 'react-native';
 
 import { Nutrients, UserPlan } from '@/types/interfaces';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from "expo-router";
-import { getUsersMeals } from '@/firebase/funcs/getUsersMeals';
+import { getCurrentPlanId } from '@/firebase/funcs/getCurrentPlanId';
 import { getUsersPlans } from '@/firebase/funcs/getUserPlans';
 
 export default function TabTwoScreen() {
 
   const [usersPlans, setUsersPlans] = useState<UserPlan[]>([])
 
-  const [todaysNutrients, setTodaysNutrients] = useState<Nutrients>({
-    "energy-kcal": 0,
-    carbohydrates_value: 0,
-    proteins_value: 0,
-    fat_value: 0
-  })
+  const [currentPlanId, setCurrentPlanId] = useState<string | null>()
 
   const path = usePathname();
 
@@ -25,43 +20,32 @@ export default function TabTwoScreen() {
     router.navigate('/planPages/addPlan')
   };
   
-    useEffect(() => {
-      if (path === "/explore") {
-        getUsersPlans().then(fetchedPlans => {
-          console.log(fetchedPlans)
-          setUsersPlans(fetchedPlans)
-        }).catch(error => {
-          console.error("Error:", error);
-        });
-        getUsersMeals(new Date()).then(fetchedMeals => {
-          const allMeals = fetchedMeals.flatMap(mealData => mealData.meals);
+  useEffect(() => {
+    if (path === "/explore") {
+      getUsersPlans().then(fetchedPlans => {
+        console.log(fetchedPlans)
+        setUsersPlans(fetchedPlans)
+      }).catch(error => {
+        console.error("Error:", error);
+      });
+      getCurrentPlanId().then(fetchedId => {
+        setCurrentPlanId(fetchedId)
+      }).catch(error => {
+        console.error("Error:", error);
+      });
+    } 
+  }, [path])
 
-          // Calculate total nutrients based on meal amount
-          const totalNutrients = allMeals.reduce((acc, meal) => {
-            const portionFactor = meal.amount / 100; // Convert to the nutrient for the portion size
-  
-            // Sum the nutrients, multiplying by the portion factor
-            acc["energy-kcal"] += (meal["energy-kcal"] || 0) * portionFactor;
-            acc.carbohydrates_value += (meal.carbohydrates_value || 0) * portionFactor;
-            acc.proteins_value += (meal.proteins_value || 0) * portionFactor;
-            acc.fat_value += (meal.fat_value || 0) * portionFactor;
-  
-            return acc;
-          }, {
-            "energy-kcal": 0,
-            carbohydrates_value: 0,
-            proteins_value: 0,
-            fat_value: 0
-          });
-  
-          // Update state with the total nutrients
-          console.log(totalNutrients)
-          setTodaysNutrients(totalNutrients);
-        }).catch(error => {
-          console.error("Error:", error);
-        });
-      } 
-    }, [path])
+  const renderPlanItem = ({ item }: { item: UserPlan }) => (
+    <View style={styles.planItem}>
+      <Text style={styles.planTitle}>Plan ID: {item.id}</Text>
+      <Text>Goal: {item.planData.goal}</Text>
+      <Text>Start Date: {item.planData.startDate.toDateString()}</Text>
+      <Text>End Date: {item.planData.endDate.toDateString()}</Text>
+      <Text>Daily Calories: {item.dailyNutrients?.["energy-kcal"]} kcal</Text>
+    </View>
+  )
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ gap: 20 }}>
@@ -78,6 +62,13 @@ export default function TabTwoScreen() {
       >
         <Text style={styles.buttonText}>add Plan</Text>
       </Pressable>
+      <FlatList
+        data={usersPlans}
+        keyExtractor={(item) => item.id}
+        renderItem={renderPlanItem}
+        contentContainerStyle={styles.listContainer}
+        ListEmptyComponent={<Text style={styles.emptyText}>No plans available</Text>}
+      />
     </SafeAreaView>
   );
 }
@@ -109,5 +100,26 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  listContainer: {
+    padding: 16,
+  },
+  planItem: {
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 8,
+    backgroundColor: "#f8f8f8",
+    borderColor: "#ddd",
+    borderWidth: 1,
+  },
+  planTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  emptyText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#888",
   },
 });
