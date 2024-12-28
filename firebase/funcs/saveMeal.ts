@@ -3,6 +3,7 @@ import { db } from "../firestore";
 import { getCurrentUserId } from "./getCurrentUserId";
 import { MealItem } from "@/types/interfaces";
 import formatMealDate from "../helpers/formatDate";
+import logMeal from "./logMeal";
 
 export default async function saveMeal(meal: MealItem[]) {
     try {
@@ -26,6 +27,8 @@ export default async function saveMeal(meal: MealItem[]) {
         });
 
         console.log("Document successfully written!", docRef.id);
+
+        await logMeal(userId, meal);
     } catch (error) {
         console.error("Error writing document: ", error);
     }

@@ -27,7 +27,6 @@ export const getUserDailyLogs = async (): Promise<DailyLog[]> => {
         const logs: DailyLog[] = querySnapshot.docs.map(doc => {
             const data = doc.data();
             const dailyLog: DailyLog = {
-                id: doc.id,
                 date: data.date,  
                 totalIntake: data.totalIntake as Nutrients,  
                 dailyNutrients: data.dailyNutrients as Nutrients,  

@@ -74,7 +74,6 @@ export interface UserPlan {
 }
 
 export interface DailyLog {
-    id: string;
     date: string;
     totalIntake: Nutrients;
     dailyNutrients: Nutrients;
