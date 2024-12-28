@@ -1,8 +1,9 @@
 import { collection, getDocs } from "firebase/firestore";
-import { db, auth } from "../firestore";
+import { db } from "../firestore";
 import { getCurrentUserId } from "./getCurrentUserId"; 
+import { DailyLog, Nutrients } from "@/types/interfaces";  // Ensure Nutrients is imported
 
-export const fetchUserDailyLogs = async () => {
+export const getUserDailyLogs = async (): Promise<DailyLog[]> => {
     try {
         const userId = await getCurrentUserId(); 
         if (!userId) {
@@ -22,14 +23,22 @@ export const fetchUserDailyLogs = async () => {
             return [];
         }
 
-        // Map the logs to an array
-        const logs = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
+        // Map the logs to an array, ensuring correct typing and including all necessary fields
+        const logs: DailyLog[] = querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            const dailyLog: DailyLog = {
+                id: doc.id,
+                date: data.date,  
+                totalIntake: data.totalIntake as Nutrients,  
+                dailyNutrients: data.dailyNutrients as Nutrients,  
+                adherence: data.adherence as Nutrients,  
+            };
+            return dailyLog;
+        });
 
         return logs;
     } catch (error) {
         console.error("Error fetching logs:", error);
+        return [];  // Return an empty array in case of an error
     }
 };

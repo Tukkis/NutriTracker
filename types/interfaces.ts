@@ -72,3 +72,11 @@ export interface UserPlan {
     planData: PlanData;
     dailyNutrients: Nutrients;
 }
+
+export interface DailyLog {
+    id: string;
+    date: string;
+    totalIntake: Nutrients;
+    dailyNutrients: Nutrients;
+    adherence: Nutrients;
+  }
