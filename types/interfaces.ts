@@ -78,4 +78,6 @@ export interface DailyLog {
     totalIntake: Nutrients;
     dailyNutrients: Nutrients;
     adherence: Nutrients;
+    plan: string;
+    score: number;
   }

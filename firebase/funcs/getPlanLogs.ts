@@ -1,9 +1,9 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firestore";
 import { getCurrentUserId } from "./getCurrentUserId"; 
 import { DailyLog, Nutrients } from "@/types/interfaces";  // Ensure Nutrients is imported
 
-export const getUserDailyLogs = async (): Promise<DailyLog[]> => {
+export const getPlanLogs = async (planId: string | null): Promise<DailyLog[]> => {
     try {
         const userId = await getCurrentUserId(); 
         if (!userId) {
@@ -13,13 +13,16 @@ export const getUserDailyLogs = async (): Promise<DailyLog[]> => {
 
         // Reference to the user's dailyLogs subcollection
         const logsRef = collection(db, `users/${userId}/dailyLogs`);
-        
-        // Fetch all documents from the dailyLogs collection
-        const querySnapshot = await getDocs(logsRef);
+
+        // Create a query to fetch logs with the specific plan ID
+        const dailyLogQuery = query(logsRef, where("plan", "==", planId));
+
+        // Fetch the documents based on the query
+        const querySnapshot = await getDocs(dailyLogQuery);
 
         // If no logs found
         if (querySnapshot.empty) {
-            console.log("No logs found for the user.");
+            console.log(`No logs found for the user with plan: ${planId}`);
             return [];
         }
 
