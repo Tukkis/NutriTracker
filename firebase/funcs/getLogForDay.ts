@@ -4,10 +4,7 @@ import { getCurrentUserId } from "./getCurrentUserId";
 import { DailyLog, Nutrients } from "@/types/interfaces";
 
 // Helper function to get today's date in YYYY-MM-DD format
-
-
-
-export const getTodaysDailyLog = async (): Promise<DailyLog | null> => {
+export const getLogForDay = async (): Promise<DailyLog | null> => {
   try {
     const userId = await getCurrentUserId();
     if (!userId) {

@@ -5,6 +5,7 @@ import { Link, useRouter } from "expo-router";
 import { useMealContext } from "../../contexts/MealContext";
 
 import saveMeal from "@/firebase/funcs/saveMeal";
+import { updateChallengeProgress } from "@/firebase/funcs/updateChallengeProgress";
 
 export default function AddMeal() {
   const { meal, setMeal } = useMealContext();
@@ -44,6 +45,7 @@ export default function AddMeal() {
   const handleSaveMeal = () => {
     if (meal.length > 0) {
       saveMeal(meal);
+      updateChallengeProgress()
       setMeal([]);
     } else {
       console.error("No meal to save.");

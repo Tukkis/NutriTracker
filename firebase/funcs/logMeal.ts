@@ -1,9 +1,9 @@
 import { MealItem, Nutrients, UserPlan, DailyLog } from "../../types/interfaces";
-import { getCurrentPlanId } from "./getCurrentPlanId"; // Import the function
-import { getUsersPlans } from "./getUserPlans"; // Import the function
-import { getUserDailyLogs } from "./getUserLogs"; // Import the function
+import { getCurrentPlanId } from "./getCurrentPlanId"; 
+import { getUsersPlans } from "./getUserPlans"; 
+import { getUserDailyLogs } from "./getUserLogs"; 
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import { db } from "../firestore"; // Ensure this is your Firestore database instance
+import { db } from "../firestore"; 
 
 function calculateAdherence(actual: number, goal: number): number {
   if (goal === 0) return actual === 0 ? 100 : 0;

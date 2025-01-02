@@ -11,6 +11,8 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/firestore";
 import Login from "./login"; 
+import { updateChallengeProgress } from "@/firebase/funcs/updateChallengeProgress";
+import { DailyLogProvider } from "@/contexts/LogContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -36,6 +38,11 @@ export default function RootLayout() {
     return () => unsubscribe();
   }, []);
 
+  //Update progress
+  useEffect(() => {
+    updateChallengeProgress()
+  }, []);
+
   if (!loaded || isAuthenticated === null) {
     // Wait for fonts to load and authentication state to initialize
     return null;
@@ -48,15 +55,17 @@ export default function RootLayout() {
 
   return (
     <MealProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="newMealPages/index" options={{ headerShown: false }} />
-          <Stack.Screen name="planPages/addPlan" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+      <DailyLogProvider>
+        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="newMealPages/index" options={{ headerShown: false }} />
+            <Stack.Screen name="planPages/addPlan" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </DailyLogProvider>
     </MealProvider>
   );
 }

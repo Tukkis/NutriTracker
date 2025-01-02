@@ -25,6 +25,12 @@ export interface MealContextType {
     removeMeal: (mealIndex: number) => void; 
 }
 
+export interface DailyLogContextType {
+    dailyLogs: DailyLog[]; 
+    setDailyLogs: React.Dispatch<React.SetStateAction<DailyLog[]>>; 
+}
+  
+
 interface Product {
     product_name?: string;
     nutriments?: MealItem;
@@ -80,4 +86,27 @@ export interface DailyLog {
     adherence: Nutrients;
     plan: string;
     score: number;
-  }
+}
+
+export interface ChallengeData {
+    id: string;
+    name: string;
+    durationDays: number;
+    goal: string;
+    intensity: string;
+    targetNutrients: Nutrients;
+    description: string;
+    rewardPoints: number;
+}
+
+export interface UserChallenge {
+    challengeId: string;
+    name: string;
+    startDate: string;
+    duration: number;
+    dailyProgress: number;
+    progress: number;
+    lastTracked: string;
+    completed: boolean;
+    targetNutrients: Nutrients;
+}
