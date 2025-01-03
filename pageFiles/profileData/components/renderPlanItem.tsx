@@ -4,7 +4,7 @@ import { Text, View, FlatList, StyleSheet, Dimensions, Pressable } from "react-n
 interface RenderPlanItemProps {
   item: UserPlan;
   currentPlanId: string | null;
-  handlePlanEdit: (planId: string) => void; 
+  handlePlanEdit: (plan: UserPlan) => void; 
   handlePlanDelete: (planId: string) => void;
 }
 
@@ -25,7 +25,7 @@ export const renderPlanItem = ({
       <Text>Daily Calories: {item.dailyNutrients?.["energy-kcal"]} kcal</Text>
 
       <View style={styles.actionButtons}>
-        <Pressable style={styles.editButton} onPress={() => handlePlanEdit(item.id)}>
+        <Pressable style={styles.editButton} onPress={() => handlePlanEdit(item)}>
           <Text style={styles.buttonText}>Edit</Text>
         </Pressable>
         <Pressable style={styles.deleteButton} onPress={() => handlePlanDelete(item.id)}>

@@ -10,7 +10,7 @@ localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset());
 
 export default function AddPlan() {
   const [plan, setPlan] = useState<PlanData>({
-    intensity: "moderate", // Default intensity
+    intensity: "moderate",
     startingWeight: 0,
     height: 0,
     age: 0,

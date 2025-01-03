@@ -6,6 +6,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
+import { PlanProvider } from "@/contexts/PlanContext";
 import { MealProvider } from "../contexts/MealContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { onAuthStateChanged } from "firebase/auth";
@@ -49,17 +50,19 @@ export default function RootLayout() {
 
   return (
     <MealProvider>
-      <DailyLogProvider>
-        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="newMealPages/index" options={{ headerShown: false }} />
-            <Stack.Screen name="planPages/addPlan" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" />
-        </ThemeProvider>
-      </DailyLogProvider>
+      <PlanProvider>
+        <DailyLogProvider>
+          <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="newMealPages/index" options={{ headerShown: false }} />
+              <Stack.Screen name="planPages/addPlan" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </DailyLogProvider>
+      </PlanProvider>
     </MealProvider>
   );
 }

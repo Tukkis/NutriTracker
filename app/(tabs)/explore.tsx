@@ -7,6 +7,7 @@ import { useDailyLogContext } from "../../contexts/LogContext";
 import { UserPlan, DailyLog, DataTab, UserChallenge, UserMeal } from "@/types/interfaces";
 import { getUserChallenges } from "@/firebase/funcs/getUserChallenges";
 import { getUsersMeals } from "@/firebase/funcs/getUsersMeals";
+import { useRouter } from "expo-router";
 
 import { renderLogItem } from "@/pageFiles/profileData/components/renderLogItem";
 import { renderPlanItem } from "@/pageFiles/profileData/components/renderPlanItem";
@@ -42,13 +43,18 @@ export default function TabTwoScreen() {
       });
   }, []);
 
+  const router = useRouter(); 
+
   const handlePlanDelete = (planId: string) => {
     setUsersPlans(usersPlans => usersPlans.filter(plan => plan.id !== planId));
     /* deletePlanFromDatabase(planId);  */
   };
 
-  const handlePlanEdit = (planId: string) => {
-    /* navigation.navigate("EditPlan", { planId }); */
+  const handlePlanEdit = (plan: UserPlan) => {
+    router.push({
+      pathname: "/planPages/editPlan",
+      params: { plan },
+    });
   };
 
   const handleLogDelete = (logDate: string) => {
@@ -71,13 +77,10 @@ export default function TabTwoScreen() {
   const handleAddAction = () => {
     switch (activeTab) {
       case "plans":
-        console.log("Add new plan");
-        break;
-      case "logs":
-        console.log("Add new log");
+        router.push("/planPages/addPlan");
         break;
       case "meals":
-        console.log("Add new meal");
+        router.push("/newMeal");
         break;
       default:
         console.log("Unhandled tab");
@@ -88,20 +91,25 @@ export default function TabTwoScreen() {
     switch (activeTab) {
       case "plans":
         return (
-          <FlatList
-            data={usersPlans}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) =>
-              renderPlanItem({
-                item,
-                currentPlanId,
-                handlePlanEdit,
-                handlePlanDelete,
-              })
-            }
-            contentContainerStyle={styles.listContainer}
-            ListEmptyComponent={<Text style={styles.emptyText}>No plans available</Text>}
-          />
+          <View>
+            <FlatList
+              data={usersPlans}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) =>
+                renderPlanItem({
+                  item,
+                  currentPlanId,
+                  handlePlanEdit,
+                  handlePlanDelete,
+                })
+              }
+              contentContainerStyle={styles.listContainer}
+              ListEmptyComponent={<Text style={styles.emptyText}>No plans available</Text>}
+            />
+            <TouchableOpacity style={styles.fab} onPress={handleAddAction}>
+              <AntDesign name="plus" size={24} color="#fff" />
+            </TouchableOpacity>
+          </View>
         );
       case "logs":
         return (
@@ -119,11 +127,16 @@ export default function TabTwoScreen() {
         );
       case "meals":
         return (
-          <MealList
+          <View>
+            <MealList
             userMeals={meals}
             onEditMeal={(meal) => console.log("Edit meal:", meal)}
             onDeleteMeal={(meal) => console.log("Delete meal:", meal)}
-          />
+            />
+            <TouchableOpacity style={styles.fab} onPress={handleAddAction}>
+              <AntDesign name="plus" size={24} color="#fff" />
+            </TouchableOpacity>
+          </View>
         );
       case "challenges":
         return (
@@ -174,9 +187,6 @@ export default function TabTwoScreen() {
           <View style={styles.constentContainer}>
             {renderTabContent()}
           </View>
-          <TouchableOpacity style={styles.fab} onPress={handleAddAction}>
-            <AntDesign name="plus" size={24} color="#fff" />
-          </TouchableOpacity>
         </View>
       )}
     </SafeAreaView>
@@ -255,7 +265,7 @@ const styles = StyleSheet.create({
   fab: {
     position: "absolute",
     right: 16,
-    bottom: 16,
+    bottom: 66,
     width: 56,
     height: 56,
     borderRadius: 28,
