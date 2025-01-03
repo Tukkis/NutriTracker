@@ -1,4 +1,8 @@
-import { Timestamp } from 'firebase/firestore';
+export type DataTab =
+  | "plans"
+  | "logs"
+  | "meals"
+  | "challenges";
 
 export interface MealItem {
     product_name: string;
@@ -13,7 +17,7 @@ export interface UserMeal {
     id: string;
     meals: MealItem[];
     userId: string;
-    date: Timestamp;
+    date: string;
 }
 
 export interface MealContextType {
@@ -99,6 +103,7 @@ export interface ChallengeData {
 }
 
 export interface UserChallenge {
+    id: string;
     challengeId: string;
     name: string;
     startDate: string;

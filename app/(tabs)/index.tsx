@@ -18,7 +18,6 @@ const dateString = `${day}-${month}-${year}`;
 const { width } = Dimensions.get('window');
 
 export default function Home() {
-  const [meals, setMeals] = useState<UserMeal[]>([])
   const { dailyLogs, setDailyLogs } = useDailyLogContext();
   const [isAppLaunched, setIsAppLaunched] = useState(false);
 
@@ -30,20 +29,6 @@ export default function Home() {
       setIsAppLaunched(true);  // Mark that the app has launched
     }
   }, [isAppLaunched]); // Only trigger when app is launched
-
-  const path = usePathname();
-
-  useEffect(() => {
-    if (path === "/") {
-      getUsersMeals()
-        .then(fetchedMeals => {
-          setMeals(fetchedMeals);
-        })
-        .catch(error => {
-          console.error("Error:", error);
-        });
-    }
-  }, [path]);
 
   const todaysLog: DailyLog = 
   dailyLogs.find((log) => log.date === dateString) || 

@@ -25,7 +25,8 @@ export async function getUserChallenges(): Promise<UserChallenge[]> {
     const userChallenges: UserChallenge[] = challengesSnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
-        challengeId: doc.id, // Document ID as challengeId
+        id: doc.id,
+        challengeId: data.challengeId, 
         name: data.name,
         startDate: data.startDate,
         endDate: data.endDate,
@@ -34,7 +35,7 @@ export async function getUserChallenges(): Promise<UserChallenge[]> {
         progress: data.progress,
         lastTracked: data.lastTracked,
         completed: data.completed,
-        targetNutrients: data.targetNutrients, // Ensure this matches the Nutrients type
+        targetNutrients: data.targetNutrients,
       };
     });
 
