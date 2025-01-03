@@ -96,13 +96,13 @@ export interface ChallengeData {
     intensity: string;
     targetNutrients: Nutrients;
     description: string;
-    rewardPoints: number;
 }
 
 export interface UserChallenge {
     challengeId: string;
     name: string;
     startDate: string;
+    endDate: string;
     duration: number;
     dailyProgress: number;
     progress: number;

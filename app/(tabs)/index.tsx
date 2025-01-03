@@ -7,7 +7,8 @@ import { useEffect, useState } from "react";
 import { MealItem, UserMeal, DailyLog } from "../../types/interfaces";
 import { usePathname } from "expo-router";
 import { getUsersMeals } from '../../firebase/funcs/getUsersMeals';
-import { getUserDailyLogs } from "@/firebase/funcs/getUserLogs";
+import { useDailyLogContext } from "../../contexts/LogContext";
+import { updateChallengeProgress } from "@/firebase/funcs/updateChallengeProgress";
 
 const now = new Date();
 const day = String(now.getDate()).padStart(2, "0");
@@ -17,8 +18,18 @@ const dateString = `${day}-${month}-${year}`;
 const { width } = Dimensions.get('window');
 
 export default function Home() {
-  const [meals, setMeals] = useState<UserMeal[]>([]);
-  const [logs, setLogs] = useState<DailyLog[]>([]);
+  const [meals, setMeals] = useState<UserMeal[]>([])
+  const { dailyLogs, setDailyLogs } = useDailyLogContext();
+  const [isAppLaunched, setIsAppLaunched] = useState(false);
+
+  // Runs when the app is first launched
+  useEffect(() => {
+    if (!isAppLaunched) {
+      // This is the first time the app is launched
+      updateChallengeProgress(dailyLogs[0]);
+      setIsAppLaunched(true);  // Mark that the app has launched
+    }
+  }, [isAppLaunched]); // Only trigger when app is launched
 
   const path = usePathname();
 
@@ -31,20 +42,11 @@ export default function Home() {
         .catch(error => {
           console.error("Error:", error);
         });
-      getUserDailyLogs()
-        .then(fetchedLogs => {
-          if (fetchedLogs) {
-            setLogs(fetchedLogs);
-          }
-        })
-        .catch(error => {
-          console.error("Error fetching logs:", error);
-        });
     }
   }, [path]);
 
   const todaysLog: DailyLog = 
-  logs.find((log) => log.date === dateString) || 
+  dailyLogs.find((log) => log.date === dateString) || 
   {
     date: dateString,
     totalIntake: {
@@ -146,85 +148,6 @@ export default function Home() {
         </View>
       </View>
       <Text style={styles.header}>Past Logs:</Text>
-      <FlatList
-      data={logs}
-      keyExtractor={(item: DailyLog) => item.date}
-      renderItem={({ item }) => (
-        item.date=== dateString ? null :
-        <View style={styles.log}>
-          <Text style={styles.logtext}>Date: {item.date}</Text>
-          <View style={styles.adherenceContainer}>
-            <View style={styles.nutrient}>
-              <Text style={styles.logtext}>Energy</Text>
-              <Progress.Circle
-                size={50}
-                animated={false}
-                progress={item.adherence["energy-kcal"] / 100}
-                showsText={true}
-                formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
-                thickness={8}
-                borderWidth={0}
-                color="#3b82f6"
-                unfilledColor="#e0e0e0"
-              />
-            </View>
-            <View style={styles.nutrient}>
-              <Text style={styles.logtext}>Carbs</Text>
-              <Progress.Circle
-                size={50}
-                animated={false}
-                progress={item.adherence.carbohydrates_value / 100}
-                showsText={true}
-                formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
-                thickness={8}
-                borderWidth={0}
-                color="#3b82f6"
-                unfilledColor="#e0e0e0"
-              />
-            </View>
-            <View style={styles.nutrient}>
-              <Text style={styles.logtext}>Proteins</Text>
-              <Progress.Circle
-                size={50}
-                animated={false}
-                progress={item.adherence.proteins_value / 100}
-                showsText={true}
-                formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
-                thickness={8}
-                borderWidth={0}
-                color="#3b82f6"
-                unfilledColor="#e0e0e0"
-              />
-            </View>
-            <View style={styles.nutrient}>
-              <Text style={styles.logtext}>Fats</Text>
-              <Progress.Circle
-                size={50}
-                animated={false}
-                progress={item.adherence.fat_value / 100} 
-                showsText={true}
-                formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
-                thickness={8}
-                borderWidth={0}
-                color="#3b82f6"
-                unfilledColor="#e0e0e0"
-              />
-            </View>
-          </View>
-          <View style={styles.nutrient}>
-            <Text style={styles.logtext}>Score</Text>
-            <Progress.Bar
-                width={90}
-                animated={false}
-                progress={item.score / 100} 
-                borderWidth={0}
-                color="#3b82f6"
-                unfilledColor="#e0e0e0"
-              />
-          </View>
-        </View>
-      )}
-    />
     </SafeAreaView>
   );
 }

@@ -14,12 +14,15 @@ export async function generateUserChallenge(plan: UserPlan) {
         
         const item = challenges[Math.floor(Math.random()*challenges.length)];
 
-        console.log(item)
+        const startDate = new Date();
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + item.durationDays);
 
         const newUserChallenge: UserChallenge = {
             challengeId: item.id,
             name:item.name,
             startDate: formatDate(new Date),
+            endDate: formatDate(endDate),
             duration: item.durationDays,
             dailyProgress: 0,
             progress: 0,

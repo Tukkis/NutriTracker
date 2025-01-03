@@ -21,7 +21,7 @@ export const DailyLogProvider = ({ children }: { children: ReactNode }) => {
       const sortedLogs = fetchedLogs.sort((a, b) => {
         const dateA = convertToDate(a.date);
         const dateB = convertToDate(b.date);
-        return dateA.getTime() - dateB.getTime();
+        return dateB.getTime() - dateA.getTime(); 
       });
   
       setDailyLogs(sortedLogs);

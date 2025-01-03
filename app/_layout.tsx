@@ -11,7 +11,6 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/firestore";
 import Login from "./login"; 
-import { updateChallengeProgress } from "@/firebase/funcs/updateChallengeProgress";
 import { DailyLogProvider } from "@/contexts/LogContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -36,11 +35,6 @@ export default function RootLayout() {
       setIsAuthenticated(!!user);
     });
     return () => unsubscribe();
-  }, []);
-
-  //Update progress
-  useEffect(() => {
-    updateChallengeProgress()
   }, []);
 
   if (!loaded || isAuthenticated === null) {
