@@ -1,9 +1,19 @@
 import React from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
-import { UserMeal, MealItem } from "@/types/interfaces"; // Ensure correct imports
+import { View, Text, StyleSheet, FlatList, Pressable } from "react-native";
+import { UserMeal, MealItem } from "@/types/interfaces";
+
+interface MealListProps {
+  userMeals: UserMeal[];
+  onEditMeal: (meal: MealItem) => void;
+  onDeleteMeal: (meal: MealItem) => void;
+}
 
 // Render Meal Item
-const renderMealItem = ({ item }: { item: MealItem }) => {
+const renderMealItem = (
+  { item }: { item: MealItem },
+  onEditMeal: (meal: MealItem) => void,
+  onDeleteMeal: (meal: MealItem) => void
+) => {
   return (
     <View style={styles.mealContainer}>
       <Text style={styles.mealName}>{item.product_name}</Text>
@@ -15,23 +25,33 @@ const renderMealItem = ({ item }: { item: MealItem }) => {
         <Text style={styles.nutrientText}>Proteins: {item.proteins_value}/100g</Text>
         <Text style={styles.nutrientText}>Fats: {item.fat_value}/100g</Text>
       </View>
+
+      {/* Edit and Delete Buttons */}
+      <View style={styles.actionButtons}>
+        <Pressable style={styles.editButton} onPress={() => onEditMeal(item)}>
+          <Text style={styles.buttonText}>Edit</Text>
+        </Pressable>
+        <Pressable style={styles.deleteButton} onPress={() => onDeleteMeal(item)}>
+          <Text style={styles.buttonText}>Delete</Text>
+        </Pressable>
+      </View>
     </View>
   );
 };
 
 // Main component
-const MealList: React.FC<{ userMeals: UserMeal[] }> = ({ userMeals }) => {
+const MealList: React.FC<MealListProps> = ({ userMeals, onEditMeal, onDeleteMeal }) => {
   return (
     <FlatList
       data={userMeals}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <View>
-          <Text style={styles.dateHeader}>{item.date}</Text> 
+          <Text style={styles.dateHeader}>{item.date}</Text>
           <FlatList
-            data={item.meals} // Meals array inside UserMeal
-            keyExtractor={(mealItem) => mealItem.product_name} // Can also use meal ID if available
-            renderItem={renderMealItem} // Render each meal item
+            data={item.meals}
+            keyExtractor={(mealItem) => mealItem.product_name}
+            renderItem={({ item: mealItem }) => renderMealItem({ item: mealItem }, onEditMeal, onDeleteMeal)}
           />
         </View>
       )}
@@ -71,11 +91,32 @@ const styles = StyleSheet.create({
   dateHeader: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "blue",
+    color: "white",
     paddingTop: 16,
   },
   flatListContainer: {
-    paddingBottom: 120, 
+    paddingBottom: 120,
+  },
+  actionButtons: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 12,
+  },
+  editButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    backgroundColor: "#007BFF",
+  },
+  deleteButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    backgroundColor: "#FF4D4D",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 14,
   },
 });
 

@@ -1,10 +1,20 @@
 import { UserPlan } from "@/types/interfaces";
-import { Text, View, FlatList, StyleSheet, Dimensions } from "react-native";
+import { Text, View, FlatList, StyleSheet, Dimensions, Pressable } from "react-native";
 
-export const renderPlanItem = ({ item, currentPlanId }: { item: UserPlan; currentPlanId: string | null }) => {
+interface RenderPlanItemProps {
+  item: UserPlan;
+  currentPlanId: string | null;
+  handlePlanEdit: (planId: string) => void; 
+  handlePlanDelete: (planId: string) => void;
+}
+
+export const renderPlanItem = ({
+  item,
+  currentPlanId,
+  handlePlanEdit,
+  handlePlanDelete,
+}: RenderPlanItemProps) => {
   const isCurrentPlan = currentPlanId === item.id;
-
-  console.log(item)
 
   return (
     <View style={isCurrentPlan ? styles.currentPlan : styles.planItem}>
@@ -13,42 +23,66 @@ export const renderPlanItem = ({ item, currentPlanId }: { item: UserPlan; curren
       <Text>Goal: {item.planData.goal}</Text>
       <Text>Intensity: {item.planData.intensity}</Text>
       <Text>Daily Calories: {item.dailyNutrients?.["energy-kcal"]} kcal</Text>
+
+      <View style={styles.actionButtons}>
+        <Pressable style={styles.editButton} onPress={() => handlePlanEdit(item.id)}>
+          <Text style={styles.buttonText}>Edit</Text>
+        </Pressable>
+        <Pressable style={styles.deleteButton} onPress={() => handlePlanDelete(item.id)}>
+          <Text style={styles.buttonText}>Delete</Text>
+        </Pressable>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-    planItem: {
-        padding: 16,
-        marginBottom: 12,
-        borderRadius: 8,
-        backgroundColor: "#f8f8f8",
-        borderColor: "#ddd",
-        borderWidth: 1,
-      },
-      currentPlan: {
-        padding: 16,
-        marginBottom: 16,
-        borderRadius: 8,
-        backgroundColor: "#e8f5e9",
-        borderColor: "#4caf50",
-        borderWidth: 1,
-      },
-      planHeader: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: "#4caf50",
-        marginBottom: 8,
-      },
-      noCurrentPlanText: {
-        textAlign: "center",
-        fontSize: 16,
-        color: "#888",
-        marginVertical: 16,
-      }, 
-      planTitle: {
-        fontSize: 16,
-        fontWeight: "bold",
-        marginBottom: 8,
-      },
-})
+  planItem: {
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 8,
+    backgroundColor: "#f8f8f8",
+    borderColor: "#ddd",
+    borderWidth: 1,
+  },
+  currentPlan: {
+    padding: 16,
+    marginBottom: 16,
+    borderRadius: 8,
+    backgroundColor: "#e8f5e9",
+    borderColor: "#4caf50",
+    borderWidth: 1,
+  },
+  planHeader: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#4caf50",
+    marginBottom: 8,
+  },
+  planTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  actionButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 12,
+  },
+  editButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    backgroundColor: "#007BFF",
+  },
+  deleteButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    backgroundColor: "#FF4D4D",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 14,
+  },
+});

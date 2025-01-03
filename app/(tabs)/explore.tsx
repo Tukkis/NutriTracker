@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, Text, View, Pressable, FlatList, ActivityIndicator, StyleSheet } from "react-native";
+import { SafeAreaView, Text, View, Pressable, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
+import { AntDesign } from '@expo/vector-icons';
 import { getCurrentPlanId } from "@/firebase/funcs/getCurrentPlanId";
 import { getUsersPlans } from "@/firebase/funcs/getUserPlans";
 import { useDailyLogContext } from "../../contexts/LogContext";
@@ -41,6 +42,24 @@ export default function TabTwoScreen() {
       });
   }, []);
 
+  const handlePlanDelete = (planId: string) => {
+    setUsersPlans(usersPlans => usersPlans.filter(plan => plan.id !== planId));
+    /* deletePlanFromDatabase(planId);  */
+  };
+
+  const handlePlanEdit = (planId: string) => {
+    /* navigation.navigate("EditPlan", { planId }); */
+  };
+
+  const handleLogDelete = (logDate: string) => {
+    setDailyLogs(dailyLogs => dailyLogs.filter(log => log.date !== logDate));
+    /* deletePlanFromDatabase(planId);  */
+  };
+
+  const handleLogEdit = (logDate: string) => {
+    /* navigation.navigate("EditPlan", { planId }); */
+  };
+  
   const calculateAverageScore = (logs: DailyLog[]): number => {
     if (logs.length === 0) return 0;
     const totalScore = logs.reduce((acc, log) => acc + log.score, 0);
@@ -49,6 +68,22 @@ export default function TabTwoScreen() {
 
   const averageScore = calculateAverageScore(logsForCurrentPlan);
 
+  const handleAddAction = () => {
+    switch (activeTab) {
+      case "plans":
+        console.log("Add new plan");
+        break;
+      case "logs":
+        console.log("Add new log");
+        break;
+      case "meals":
+        console.log("Add new meal");
+        break;
+      default:
+        console.log("Unhandled tab");
+    }
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "plans":
@@ -56,7 +91,14 @@ export default function TabTwoScreen() {
           <FlatList
             data={usersPlans}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => renderPlanItem({ item, currentPlanId })}
+            renderItem={({ item }) =>
+              renderPlanItem({
+                item,
+                currentPlanId,
+                handlePlanEdit,
+                handlePlanDelete,
+              })
+            }
             contentContainerStyle={styles.listContainer}
             ListEmptyComponent={<Text style={styles.emptyText}>No plans available</Text>}
           />
@@ -66,13 +108,22 @@ export default function TabTwoScreen() {
           <FlatList
           data={dailyLogs}
           keyExtractor={(item) => item.date} 
-          renderItem={({ item }) => renderLogItem({ item })}
+          renderItem={({ item }) => renderLogItem({ 
+            item,
+            handleLogEdit,
+            handleLogDelete, 
+            })
+          }
           ListEmptyComponent={<Text style={styles.emptyText}>No logs available</Text>}
           /> 
         );
       case "meals":
         return (
-          <MealList userMeals={meals} />
+          <MealList
+            userMeals={meals}
+            onEditMeal={(meal) => console.log("Edit meal:", meal)}
+            onDeleteMeal={(meal) => console.log("Delete meal:", meal)}
+          />
         );
       case "challenges":
         return (
@@ -93,7 +144,7 @@ export default function TabTwoScreen() {
       {loading ? (
         <ActivityIndicator size="large" color="#007BFF" />
       ) : (
-        <View>
+        <View style={{ flex: 1 }}>
           <View style={styles.tabHeader}>
             <Pressable
               style={[styles.tabButton, activeTab === "plans" && styles.activeTab]}
@@ -123,6 +174,9 @@ export default function TabTwoScreen() {
           <View style={styles.constentContainer}>
             {renderTabContent()}
           </View>
+          <TouchableOpacity style={styles.fab} onPress={handleAddAction}>
+            <AntDesign name="plus" size={24} color="#fff" />
+          </TouchableOpacity>
         </View>
       )}
     </SafeAreaView>
@@ -197,5 +251,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     color: "#888",
+  },
+  fab: {
+    position: "absolute",
+    right: 16,
+    bottom: 16,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#007BFF",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 4,
   },
 });

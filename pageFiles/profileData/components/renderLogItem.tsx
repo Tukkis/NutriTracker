@@ -1,11 +1,21 @@
 import React from "react";
 import { DailyLog } from "@/types/interfaces";
-import { Text, View, StyleSheet, Dimensions } from "react-native";
+import { Text, View, StyleSheet, Dimensions, Pressable } from "react-native";
 import * as Progress from "react-native-progress";
 
 const { width } = Dimensions.get("window");
 
-export const renderLogItem = ({ item }: { item: DailyLog }) => {
+interface RenderLogItemProps {
+  item: DailyLog;
+  handleLogEdit: (logDate: string) => void; 
+  handleLogDelete: (logDate: string) => void;
+}
+
+export const renderLogItem = ({
+  item,
+  handleLogEdit,
+  handleLogDelete,
+}: RenderLogItemProps) => {
   return (
     <View style={styles.log}>
       <Text style={styles.logtext}>Date: {item.date}</Text>
@@ -78,6 +88,14 @@ export const renderLogItem = ({ item }: { item: DailyLog }) => {
           unfilledColor="#e0e0e0"
         />
       </View>
+      <View style={styles.actionButtons}>
+        <Pressable style={styles.editButton} onPress={() => handleLogEdit(item.date)}>
+          <Text style={styles.buttonText}>Edit</Text>
+        </Pressable>
+        <Pressable style={styles.deleteButton} onPress={() => handleLogDelete(item.date)}>
+          <Text style={styles.buttonText}>Delete</Text>
+        </Pressable>
+      </View>
     </View>
   );
 };
@@ -101,5 +119,26 @@ const styles = StyleSheet.create({
   },
   nutrient: {
     alignItems: "center",
+  },
+  actionButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 12,
+  },
+  editButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    backgroundColor: "#007BFF",
+  },
+  deleteButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    backgroundColor: "#FF4D4D",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 14,
   },
 });
