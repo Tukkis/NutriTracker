@@ -4,57 +4,24 @@ import * as Progress from 'react-native-progress';
 
 import { useEffect, useState } from "react";
 
-import { MealItem, UserMeal, DailyLog } from "../../types/interfaces";
-import { usePathname } from "expo-router";
-import { getUsersMeals } from '../../firebase/funcs/getUsersMeals';
 import { useDailyLogContext } from "../../contexts/LogContext";
 import { updateChallengeProgress } from "@/firebase/funcs/updateChallengeProgress";
 
-const now = new Date();
-const day = String(now.getDate()).padStart(2, "0");
-const month = String(now.getMonth() + 1).padStart(2, "0");
-const year = now.getFullYear();
-const dateString = `${day}-${month}-${year}`;
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 export default function Home() {
-  const { dailyLogs, setDailyLogs } = useDailyLogContext();
+  const { todaysLog } = useDailyLogContext();
   const [isAppLaunched, setIsAppLaunched] = useState(false);
+
 
   // Runs when the app is first launched
   useEffect(() => {
     if (!isAppLaunched) {
       // This is the first time the app is launched
-      updateChallengeProgress(dailyLogs[0]);
+      updateChallengeProgress(todaysLog);
       setIsAppLaunched(true);  // Mark that the app has launched
     }
   }, [isAppLaunched]); // Only trigger when app is launched
-
-  const todaysLog: DailyLog = 
-  dailyLogs.find((log) => log.date === dateString) || 
-  {
-    date: dateString,
-    totalIntake: {
-      "energy-kcal": 0,
-      carbohydrates_value: 0,
-      proteins_value: 0,
-      fat_value: 0,
-    },
-    dailyNutrients: {
-      "energy-kcal": 0,
-      carbohydrates_value: 0,
-      proteins_value: 0,
-      fat_value: 0,
-    },
-    adherence: {
-      "energy-kcal": 0,
-      carbohydrates_value: 0,
-      proteins_value: 0,
-      fat_value: 0,
-    },
-    plan: '',
-    score: 0,
-  };
 
   return (
     <SafeAreaView style={styles.container}>

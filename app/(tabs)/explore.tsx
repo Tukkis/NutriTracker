@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { SafeAreaView, Text, View, Pressable, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 import { getCurrentPlanId } from "@/firebase/funcs/getCurrentPlanId";
-import { getUsersPlans } from "@/firebase/funcs/getUserPlans";
-import { useDailyLogContext } from "../../contexts/LogContext";
 import { UserPlan, DailyLog, DataTab, UserChallenge, UserMeal } from "@/types/interfaces";
 import { getUserChallenges } from "@/firebase/funcs/getUserChallenges";
 import { getUsersMeals } from "@/firebase/funcs/getUsersMeals";
 import { useRouter } from "expo-router";
+
+import { useMealContext } from "@/contexts/MealContext";
+import { useDailyLogContext } from "../../contexts/LogContext";
+import { usePlanContext } from "@/contexts/PlanContext";
 
 import { renderLogItem } from "@/pageFiles/profileData/components/renderLogItem";
 import { renderPlanItem } from "@/pageFiles/profileData/components/renderPlanItem";
@@ -16,23 +18,22 @@ import MealList from "@/pageFiles/profileData/components/MealList"
 
 // Your existing TabTwoScreen component with additional tab functionality
 export default function TabTwoScreen() {
-  const [meals, setMeals] = useState<UserMeal[]>([])
   const [activeTab, setActiveTab] = useState<DataTab>("plans"); 
-  const [usersPlans, setUsersPlans] = useState<UserPlan[]>([]);
   const [currentPlanId, setCurrentPlanId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [logsForCurrentPlan, setLogsForCurrentPlan] = useState<DailyLog[]>([]);
-  const [userChallenges, setUserChallenges] = useState<UserChallenge[]>([])
+  const [userChallenges, setUserChallenges] = useState<UserChallenge[]>([]);
+
+  const { meals, setMeals } =  useMealContext();
+  const { plans, setPlans } =  usePlanContext();
   const { dailyLogs, setDailyLogs } = useDailyLogContext();
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([getUsersPlans(), getCurrentPlanId(), getUserChallenges(), getUsersMeals()])
-      .then(([fetchedPlans, fetchedId, fetchedChallenges, fetchedMeals]) => {
-        setUsersPlans(fetchedPlans);
+    Promise.all([getCurrentPlanId(), getUserChallenges()])
+      .then(([fetchedId, fetchedChallenges]) => {
         setCurrentPlanId(fetchedId);
         setUserChallenges(fetchedChallenges);
-        setMeals(fetchedMeals);
         setLogsForCurrentPlan(dailyLogs.filter(log => log.plan === fetchedId));
       })
       .catch((error) => {
@@ -46,15 +47,12 @@ export default function TabTwoScreen() {
   const router = useRouter(); 
 
   const handlePlanDelete = (planId: string) => {
-    setUsersPlans(usersPlans => usersPlans.filter(plan => plan.id !== planId));
+    setPlans(usersPlans => usersPlans.filter(plan => plan.id !== planId));
     /* deletePlanFromDatabase(planId);  */
   };
 
   const handlePlanEdit = (plan: UserPlan) => {
-    router.push({
-      pathname: "/planPages/editPlan",
-      params: { plan },
-    });
+    router.navigate('/planPages/editPlan');
   };
 
   const handleLogDelete = (logDate: string) => {
@@ -77,10 +75,10 @@ export default function TabTwoScreen() {
   const handleAddAction = () => {
     switch (activeTab) {
       case "plans":
-        router.push("/planPages/addPlan");
+        router.navigate("/planPages/addPlan");
         break;
       case "meals":
-        router.push("/newMeal");
+        router.navigate("/newMeal");
         break;
       default:
         console.log("Unhandled tab");
@@ -93,7 +91,7 @@ export default function TabTwoScreen() {
         return (
           <View>
             <FlatList
-              data={usersPlans}
+              data={plans}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) =>
                 renderPlanItem({

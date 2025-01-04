@@ -1,20 +1,20 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import { MealItem, MealContextType } from "../types/interfaces";
-
-const defaultMealItem: MealItem = {
-  product_name: "",
-  "energy-kcal": 0,
-  carbohydrates_value: 0,
-  proteins_value: 0,
-  fat_value: 0,
-  amount: 0
-};
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { MealItem, MealContextType, UserMeal } from "../types/interfaces";
+import { getUsersMeals } from "@/firebase/funcs/getUsersMeals";
 
 const MealContext = createContext<MealContextType | undefined>(undefined);
 
 export const MealProvider = ({ children }: { children: ReactNode }) => {
+  const [meals, setMeals] = useState<UserMeal[]>([]);
   const [meal, setMeal] = useState<MealItem[]>([]);
-  const [mealItem, setMealItem] = useState<MealItem>(defaultMealItem);
+  const [mealItem, setMealItem] = useState<MealItem>({
+    product_name: "",
+    "energy-kcal": 0,
+    carbohydrates_value: 0,
+    proteins_value: 0,
+    fat_value: 0,
+    amount: 0
+  });
 
   const addMeal = (newMeal: MealItem) => {
     setMeal((prevMeals) => [...prevMeals, newMeal]);
@@ -24,8 +24,21 @@ export const MealProvider = ({ children }: { children: ReactNode }) => {
     setMeal((prevMeals) => prevMeals.filter((_, index) => index !== mealIndex));
   };
 
+  const fetchMeals = async () => {
+      try {
+        const fetchedPlans = await getUsersMeals();
+        setMeals(fetchedPlans);
+      } catch (error) {
+        console.error("Error fetching user plans:", error);
+      }
+    };
+
+  useEffect(() => {
+    fetchMeals();
+  }, []);
+
   return (
-    <MealContext.Provider value={{ meal, setMeal, mealItem, setMealItem, addMeal, removeMeal }}>
+    <MealContext.Provider value={{ meal, setMeal, mealItem, setMealItem, addMeal, removeMeal, meals, setMeals }}>
       {children}
     </MealContext.Provider>
   );

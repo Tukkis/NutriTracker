@@ -26,13 +26,25 @@ export interface MealContextType {
     mealItem: MealItem;
     setMealItem: React.Dispatch<React.SetStateAction<MealItem>>;
     addMeal: (newMeal: MealItem) => void;
-    removeMeal: (mealIndex: number) => void; 
+    removeMeal: (mealIndex: number) => void;
+    meals: UserMeal[]; 
+    setMeals: React.Dispatch<React.SetStateAction<UserMeal[]>>;
+  }
+
+export interface PlanContextType {
+    selectedPlan: UserPlan;
+    setSelectedPlan: (plan: UserPlan) => void;
+    plans: UserPlan[];
+    setPlans: React.Dispatch<React.SetStateAction<UserPlan[]>>;
 }
+  
 
 export interface DailyLogContextType {
     dailyLogs: DailyLog[]; 
-    setDailyLogs: React.Dispatch<React.SetStateAction<DailyLog[]>>; 
-}
+    setDailyLogs: React.Dispatch<React.SetStateAction<DailyLog[]>>;
+    todaysLog: DailyLog;
+    setTodaysLog: React.Dispatch<React.SetStateAction<DailyLog>>;
+  }
   
 
 interface Product {
@@ -74,13 +86,13 @@ export interface PlanData {
     gender: Gender; 
     activity: ActivityLevel; 
     goal: PlanGoal;
+    dailyNutrients: Nutrients;
 }
 
 export interface UserPlan {
     id: string;
     userId: string;
     planData: PlanData;
-    dailyNutrients: Nutrients;
 }
 
 export interface DailyLog {

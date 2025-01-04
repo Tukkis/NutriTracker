@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { View, Text, TextInput, StyleSheet, SafeAreaView, Pressable, Button, FlatList } from "react-native";
+import { View, Text, TextInput, StyleSheet, SafeAreaView, Pressable, Button, FlatList, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from "react-native";
 import { Link, useRouter } from "expo-router";
-
 import { useMealContext } from "../../contexts/MealContext";
-
 import saveMeal from "@/firebase/funcs/saveMeal";
 import { updateChallengeProgress } from "@/firebase/funcs/updateChallengeProgress";
 
@@ -46,127 +44,132 @@ export default function AddMeal() {
     if (meal.length > 0) {
       saveMeal(meal);
       updateChallengeProgress()
-      setMeal([]);
+      setMeal([]); 
     } else {
       console.error("No meal to save.");
     }
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Food name:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Meal Name"
-          value={mealItem.product_name}
-          onChangeText={(text) =>
-            setMealItem({ ...mealItem, product_name: text })
-          }
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Energy (kcal/100g):</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Energy"
-          keyboardType="numeric"
-          value={mealItem["energy-kcal"]?.toString()}
-          onChangeText={(text) =>
-            setMealItem({ ...mealItem, "energy-kcal": parseInt(text) || 0 })
-          }
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Carbs (/100g):</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Carbs"
-          keyboardType="numeric"
-          value={mealItem.carbohydrates_value.toString()}
-          onChangeText={(text) =>
-            setMealItem({
-              ...mealItem,
-              carbohydrates_value: parseInt(text) || 0,
-            })
-          }
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Protein (/100g):</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Protein"
-          keyboardType="numeric"
-          value={mealItem.proteins_value.toString()}
-          onChangeText={(text) =>
-            setMealItem({
-              ...mealItem,
-              proteins_value: parseInt(text) || 0,
-            })
-          }
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Fats (/100g):</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Fats"
-          keyboardType="numeric"
-          value={mealItem.fat_value.toString()}
-          onChangeText={(text) =>
-            setMealItem({ ...mealItem, fat_value: parseInt(text) || 0 })
-          }
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Amount: (g)</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Amount"
-          keyboardType="numeric"
-          value={mealItem.amount.toString()}
-          onChangeText={(text) =>
-            setMealItem({ ...mealItem, amount: parseFloat(text) || 0 })
-          }
-        />
-      </View>
-      <Button title="Add Meal" onPress={handleAddMeal} />
-      <Button title="Save Meal" onPress={handleSaveMeal} />
-      <Pressable
-        style={({ pressed }) => [
-          styles.button,
-          pressed && styles.buttonPressed,
-        ]}
-        onPress={handleNavigation}
-      >
-        <Text style={styles.buttonText}>Scan Code</Text>
-      </Pressable>
-      <FlatList
-        data={meal}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <View>
-            <Text>Name: {item.product_name}</Text>
-            <Text>Energy: {item["energy-kcal"]}</Text>
-            <Text>Carbs: {item.carbohydrates_value}</Text>
-            <Text>Protein: {item.proteins_value}</Text>
-            <Text>Fats: {item.fat_value}</Text>
-            <Text>Amount: {item.amount}</Text>
-            <Button
-              title="Remove Meal"
-              onPress={() => handleRemoveMeal(Number(index))}
+    <SafeAreaView style={styles.container}>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Food name:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Meal Name"
+              value={mealItem.product_name}
+              onChangeText={(text) =>
+                setMealItem({ ...mealItem, product_name: text })
+              }
             />
           </View>
-        )}
-      />
-    </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Energy (kcal/100g):</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Energy"
+              keyboardType="numeric"
+              value={mealItem["energy-kcal"]?.toString()}
+              onChangeText={(text) =>
+                setMealItem({ ...mealItem, "energy-kcal": parseInt(text) || 0 })
+              }
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Carbs (/100g):</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Carbs"
+              keyboardType="numeric"
+              value={mealItem.carbohydrates_value.toString()}
+              onChangeText={(text) =>
+                setMealItem({
+                  ...mealItem,
+                  carbohydrates_value: parseInt(text) || 0,
+                })
+              }
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Protein (/100g):</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Protein"
+              keyboardType="numeric"
+              value={mealItem.proteins_value.toString()}
+              onChangeText={(text) =>
+                setMealItem({
+                  ...mealItem,
+                  proteins_value: parseInt(text) || 0,
+                })
+              }
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Fats (/100g):</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Fats"
+              keyboardType="numeric"
+              value={mealItem.fat_value.toString()}
+              onChangeText={(text) =>
+                setMealItem({ ...mealItem, fat_value: parseInt(text) || 0 })
+              }
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Amount: (g)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Amount"
+              keyboardType="numeric"
+              value={mealItem.amount.toString()}
+              onChangeText={(text) =>
+                setMealItem({ ...mealItem, amount: parseFloat(text) || 0 })
+              }
+            />
+          </View>
+          <Button title="Add Meal" onPress={handleAddMeal} />
+          <Button title="Save Meal" onPress={handleSaveMeal} />
+          <Pressable
+            style={({ pressed }) => [
+              styles.button,
+              pressed && styles.buttonPressed,
+            ]}
+            onPress={handleNavigation}
+          >
+            <Text style={styles.buttonText}>Scan Code</Text>
+          </Pressable>
+          <FlatList
+            data={meal}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <View>
+                <Text>Name: {item.product_name}</Text>
+                <Text>Energy: {item["energy-kcal"]}</Text>
+                <Text>Carbs: {item.carbohydrates_value}</Text>
+                <Text>Protein: {item.proteins_value}</Text>
+                <Text>Fats: {item.fat_value}</Text>
+                <Text>Amount: {item.amount}</Text>
+                <Button
+                  title="Remove Meal"
+                  onPress={() => handleRemoveMeal(Number(index))}
+                />
+              </View>
+            )}
+          />
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+    paddingTop: 32,
     backgroundColor: "#fff",
     flex: 1,
   },

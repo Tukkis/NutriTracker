@@ -22,7 +22,7 @@ export const renderPlanItem = ({
       <Text style={styles.planTitle}>Plan ID: {item.id}</Text>
       <Text>Goal: {item.planData.goal}</Text>
       <Text>Intensity: {item.planData.intensity}</Text>
-      <Text>Daily Calories: {item.dailyNutrients?.["energy-kcal"]} kcal</Text>
+      <Text>Daily Calories: {item.planData.dailyNutrients?.["energy-kcal"]} kcal</Text>
 
       <View style={styles.actionButtons}>
         <Pressable style={styles.editButton} onPress={() => handlePlanEdit(item)}>
