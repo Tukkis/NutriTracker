@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, Text, View, Pressable, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
+import { SafeAreaView, Text, View, Pressable, Button, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
-import { getCurrentPlanId } from "@/firebase/funcs/getCurrentPlanId";
-import { UserPlan, DailyLog, DataTab, UserChallenge, UserMeal } from "@/types/interfaces";
+import { UserPlan, DailyLog, DataTab, UserChallenge, UserMeal, MealItem } from "@/types/interfaces";
 import { getUserChallenges } from "@/firebase/funcs/getUserChallenges";
-import { getUsersMeals } from "@/firebase/funcs/getUsersMeals";
 import { useRouter } from "expo-router";
 
 import { useMealContext } from "@/contexts/MealContext";
@@ -19,22 +17,20 @@ import MealList from "@/pageFiles/profileData/components/MealList"
 // Your existing TabTwoScreen component with additional tab functionality
 export default function TabTwoScreen() {
   const [activeTab, setActiveTab] = useState<DataTab>("plans"); 
-  const [currentPlanId, setCurrentPlanId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [logsForCurrentPlan, setLogsForCurrentPlan] = useState<DailyLog[]>([]);
   const [userChallenges, setUserChallenges] = useState<UserChallenge[]>([]);
 
-  const { meals, setMeals } =  useMealContext();
-  const { plans, setPlans } =  usePlanContext();
+  const { meals, setSelectedMeal } =  useMealContext();
+  const { plans, setPlans, currentPlanId, setSelectedPlan } =  usePlanContext();
   const { dailyLogs, setDailyLogs } = useDailyLogContext();
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([getCurrentPlanId(), getUserChallenges()])
-      .then(([fetchedId, fetchedChallenges]) => {
-        setCurrentPlanId(fetchedId);
+    getUserChallenges()
+      .then( fetchedChallenges=> {
         setUserChallenges(fetchedChallenges);
-        setLogsForCurrentPlan(dailyLogs.filter(log => log.plan === fetchedId));
+        setLogsForCurrentPlan(dailyLogs.filter(log => log.plan === currentPlanId));
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -52,7 +48,18 @@ export default function TabTwoScreen() {
   };
 
   const handlePlanEdit = (plan: UserPlan) => {
-    router.navigate('/planPages/editPlan');
+    setSelectedPlan(plan)
+    router.navigate('../planPages/editPlan');
+  };
+
+  const handleMealDelete = (planId: string) => {
+    setPlans(usersPlans => usersPlans.filter(plan => plan.id !== planId));
+    /* deletePlanFromDatabase(planId);  */
+  };
+
+  const handleMealEdit = (selectedMeal: UserMeal) => {
+    setSelectedMeal(selectedMeal)
+    router.navigate('../newMealPages/editMeal');
   };
 
   const handleLogDelete = (logDate: string) => {
@@ -75,7 +82,7 @@ export default function TabTwoScreen() {
   const handleAddAction = () => {
     switch (activeTab) {
       case "plans":
-        router.navigate("/planPages/addPlan");
+        router.navigate("../planPages/addPlan");
         break;
       case "meals":
         router.navigate("/newMeal");
@@ -128,7 +135,7 @@ export default function TabTwoScreen() {
           <View>
             <MealList
             userMeals={meals}
-            onEditMeal={(meal) => console.log("Edit meal:", meal)}
+            onEditMeal={(meal) => console.log(handleMealEdit(meal))}
             onDeleteMeal={(meal) => console.log("Delete meal:", meal)}
             />
             <TouchableOpacity style={styles.fab} onPress={handleAddAction}>
@@ -149,6 +156,18 @@ export default function TabTwoScreen() {
         return null;
     }
   };
+
+  const handleNavigateAddPlan = () => {
+    router.push('/planPages/addPlan');
+  };
+
+  if (currentPlanId === null) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Button title="Add Plan to start viewing personal data" onPress={handleNavigateAddPlan} />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -195,6 +214,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "black",
+    justifyContent: "center", 
+    alignItems: "center",
     paddingVertical: 16,
   },
   constentContainer: {

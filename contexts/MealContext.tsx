@@ -6,6 +6,7 @@ const MealContext = createContext<MealContextType | undefined>(undefined);
 
 export const MealProvider = ({ children }: { children: ReactNode }) => {
   const [meals, setMeals] = useState<UserMeal[]>([]);
+  const [selectedMeal, setSelectedMeal]= useState<UserMeal | null>(null)
   const [meal, setMeal] = useState<MealItem[]>([]);
   const [mealItem, setMealItem] = useState<MealItem>({
     product_name: "",
@@ -38,7 +39,7 @@ export const MealProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <MealContext.Provider value={{ meal, setMeal, mealItem, setMealItem, addMeal, removeMeal, meals, setMeals }}>
+    <MealContext.Provider value={{ meal, setMeal, selectedMeal, setSelectedMeal, mealItem, setMealItem, addMeal, removeMeal, meals, setMeals }}>
       {children}
     </MealContext.Provider>
   );

@@ -5,11 +5,12 @@ import formatDate from "../helpers/formatDate";
 import { getCurrentChallengeId } from "./getCurrentChallengeId";
 import isOlderThanYesterday from "../helpers/isOlderThanYesterday";
 import { getCurrentUserId } from "./getCurrentUserId";
+import { updateUserScore } from "./updateUserScore";
 
 
 const parseDate = (dateString: string): Date => {
-  const [day, month, year] = dateString.split('/').map(Number); // Split by '/' and convert to numbers
-  return new Date(year, month - 1, day); // Month is 0-based in JavaScript's Date object
+  const [day, month, year] = dateString.split('/').map(Number); 
+  return new Date(year, month - 1, day); 
 }
 
 export async function updateChallengeProgress(daysLog?:DailyLog): Promise<void> {
@@ -52,6 +53,7 @@ export async function updateChallengeProgress(daysLog?:DailyLog): Promise<void> 
     
     if(today > parseDate(userChallengeData.endDate)){
       updatedCompleted = true
+      updateUserScore(updatedProgress * 10)
     } else if(indexOfMeal !== -1){
       if (userChallengeData.dailyProgress < Number(userChallengeData.name.charAt(indexOfMeal - 2))) {
         updatedDailyProgress += 1; 

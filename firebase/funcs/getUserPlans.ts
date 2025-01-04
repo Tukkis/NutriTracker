@@ -29,8 +29,7 @@ export async function getUsersPlans() {
               planData: {
                 ...data.plan
               } as PlanData,
-              userId: usersId, // Use the current user ID
-              dailyNutrients: data.dailyNutrients as Nutrients,
+              userId: usersId,
             };
         });
 

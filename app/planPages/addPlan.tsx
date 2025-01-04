@@ -4,13 +4,16 @@ import { Picker } from "@react-native-picker/picker";
 import { PlanData } from "@/types/interfaces";
 import savePlan from "@/firebase/funcs/savePlan";
 import { useRouter } from "expo-router";
-import calculateDailyNutrients from "@/firebase/helpers/calculateDailyNutrients";  // Import your helper function
+import calculateDailyNutrients from "@/firebase/helpers/calculateDailyNutrients";  
 import { KeyboardAvoidingView } from "react-native";
+
+import { usePlanContext } from "@/contexts/PlanContext";
 
 const localDate = new Date();
 localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset());
 
 export default function AddPlan() {
+  const { addPlan } = usePlanContext();
   const [plan, setPlan] = useState<PlanData>({
     intensity: "moderate",
     startingWeight: 0,
@@ -54,7 +57,7 @@ export default function AddPlan() {
 
   const handleSavePlan = () => {
     if (validatePlan()) {
-      savePlan(plan);
+      savePlan(plan, addPlan);
       router.push("/explore");
     } else {
       console.log("Plan validation failed.");

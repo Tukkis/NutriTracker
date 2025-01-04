@@ -23,19 +23,24 @@ export interface UserMeal {
 export interface MealContextType {
     meal: MealItem[];
     setMeal: React.Dispatch<React.SetStateAction<MealItem[]>>;
+    selectedMeal: UserMeal | null;
+    setSelectedMeal: React.Dispatch<React.SetStateAction<UserMeal | null>>;
     mealItem: MealItem;
     setMealItem: React.Dispatch<React.SetStateAction<MealItem>>;
     addMeal: (newMeal: MealItem) => void;
     removeMeal: (mealIndex: number) => void;
     meals: UserMeal[]; 
     setMeals: React.Dispatch<React.SetStateAction<UserMeal[]>>;
-  }
+}
 
 export interface PlanContextType {
     selectedPlan: UserPlan;
     setSelectedPlan: (plan: UserPlan) => void;
+    addPlan: (plan: UserPlan) => void;
+    editPlan: (plan: UserPlan) => void;
     plans: UserPlan[];
     setPlans: React.Dispatch<React.SetStateAction<UserPlan[]>>;
+    currentPlanId: string | null;
 }
   
 

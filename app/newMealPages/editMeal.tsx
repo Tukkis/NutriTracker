@@ -1,16 +1,11 @@
-import { View, Text, TextInput, StyleSheet, SafeAreaView, Pressable, Button, FlatList, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from "react-native";
-import { Link, useRouter } from "expo-router";
-
+import { useState, useEffect } from "react";
+import { View, Text, TextInput, StyleSheet, SafeAreaView, Pressable, Button, FlatList, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform } from "react-native";
 import { useMealContext } from "../../contexts/MealContext";
-import { usePlanContext } from "../../contexts/PlanContext";
+import { useRouter } from "expo-router";
+import { updateMeal } from "@/firebase/funcs/updateMeal";
 
-import saveMeal from "@/firebase/funcs/saveMeal";
-import { updateChallengeProgress } from "@/firebase/funcs/updateChallengeProgress";
-
-export default function AddMeal() {
-  const { meal, setMeal ,addMeal, mealItem, removeMeal, setMealItem } = useMealContext();
-  const { currentPlanId } = usePlanContext();
-
+export default function EditMeal() {
+  const { meal, selectedMeal, meals, setMeal ,addMeal, mealItem, removeMeal, setMealItem } = useMealContext();
   const router = useRouter();
 
   const validateMeal = (): boolean => {
@@ -25,9 +20,6 @@ export default function AddMeal() {
     return true;
   };
 
-  const handleNavigation = () => {
-    router.navigate('/newMealPages/index');
-  };
 
   const handleAddMeal = () => {
     if(validateMeal()){
@@ -42,27 +34,14 @@ export default function AddMeal() {
     removeMeal(index); 
   };
 
-  const handleSaveMeal = () => {
-    if (meal.length > 0) {
-      saveMeal(meal);
-      updateChallengeProgress()
-      setMeal([]); 
-    } else {
-      console.error("No meal to save.");
-    }
-  };
-
-  const handleNavigateAddPlan = () => {
-    router.push('/planPages/addPlan');
-  };
-
-  if (currentPlanId === null) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Button title="Add Plan to add meals" onPress={handleNavigateAddPlan} />
-      </SafeAreaView>
-    );
-  }
+  const handleUpdateMeal = () => {
+      if (meal.length > 0) {
+        updateMeal(selectedMeal, meal);
+        setMeal([]); 
+      } else {
+        console.error("No meal to update.");
+      }
+    };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -146,13 +125,12 @@ export default function AddMeal() {
             />
           </View>
           <Button title="Add Meal" onPress={handleAddMeal} />
-          <Button title="Save Meal" onPress={handleSaveMeal} />
           <Pressable
             style={({ pressed }) => [
               styles.button,
               pressed && styles.buttonPressed,
             ]}
-            onPress={handleNavigation}
+            onPress={() => router.push('/newMealPages/index')}
           >
             <Text style={styles.buttonText}>Scan Code</Text>
           </Pressable>
@@ -185,8 +163,6 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingTop: 32,
     backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
     flex: 1,
   },
   inputContainer: {

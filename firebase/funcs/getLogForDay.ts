@@ -1,9 +1,9 @@
-import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firestore";
 import { getCurrentUserId } from "./getCurrentUserId";
 import { DailyLog, Nutrients } from "@/types/interfaces";
 
-export const getLatestLog = async (): Promise<DailyLog | null> => {
+export const getLogForDay = async (dateString: string): Promise<DailyLog | null> => {
   try {
     const userId = await getCurrentUserId();
     if (!userId) {
@@ -14,18 +14,18 @@ export const getLatestLog = async (): Promise<DailyLog | null> => {
     // Reference to the user's dailyLogs subcollection
     const dailyLogsRef = collection(db, `users/${userId}/dailyLogs`);
 
-    // Query to get the latest log (ordering by the date field in descending order)
-    const latestLogQuery = query(dailyLogsRef, orderBy("date", "desc"), limit(1));
+    // Query to get the log for the specific date (using where to filter by dateString)
+    const dailyLogQuery = query(dailyLogsRef, where("date", "==", dateString));
 
     // Fetch the documents
-    const querySnapshot = await getDocs(latestLogQuery);
+    const querySnapshot = await getDocs(dailyLogQuery);
 
     if (querySnapshot.empty) {
-      console.log("No logs found.");
+      console.log(`No logs found for the date ${dateString}.`);
       return null;
     }
 
-    // Extract the latest document
+    // Extract the document data
     const docSnapshot = querySnapshot.docs[0];
     const data = docSnapshot.data();
 
@@ -41,7 +41,7 @@ export const getLatestLog = async (): Promise<DailyLog | null> => {
 
     return dailyLog;
   } catch (error) {
-    console.error("Error fetching the latest log:", error);
+    console.error("Error fetching the log for the specified date:", error);
     return null;
   }
 };

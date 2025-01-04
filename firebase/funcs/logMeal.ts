@@ -4,6 +4,7 @@ import { getUsersPlans } from "./getUserPlans";
 import { getUserDailyLogs } from "./getUserLogs"; 
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../firestore"; 
+import { updateUserScore } from "./updateUserScore";
 
 function calculateAdherence(actual: number, goal: number): number {
   if (goal === 0) return actual === 0 ? 100 : 0;
@@ -50,7 +51,7 @@ async function logMeal(userId: string, mealData: MealItem[]) {
     return;
   }
 
-  const { dailyNutrients }: { dailyNutrients: Nutrients } = userPlan;
+  const { dailyNutrients }: { dailyNutrients: Nutrients } = userPlan.planData;
 
   // Aggregate total nutrients for the meal data
   let totalIntake: Nutrients = {
@@ -97,13 +98,17 @@ async function logMeal(userId: string, mealData: MealItem[]) {
         fat_value: calculateAdherence(updatedTotalIntake.fat_value, dailyNutrients.fat_value),
       };
 
+      const updatedScore = calculateScore(updatedAdherence)
+
       // Update the existing daily log with the accumulated nutrients and recalculated adherence
       await setDoc(logsRef, { 
         totalIntake: updatedTotalIntake, 
         adherence: updatedAdherence,
-        score: calculateScore(updatedAdherence),
+        score: updatedScore,
       }, { merge: true });
-      
+
+      updateUserScore(updatedScore - dailyLog.score)
+
       console.log(`Updated daily nutrition log for user: ${userId}`);
     } else {
       const adherence: Nutrients = {
@@ -112,17 +117,23 @@ async function logMeal(userId: string, mealData: MealItem[]) {
         proteins_value: calculateAdherence(totalIntake.proteins_value, dailyNutrients.proteins_value),
         fat_value: calculateAdherence(totalIntake.fat_value, dailyNutrients.fat_value),
       };
+
+      const newScore = calculateScore(adherence)
+
       // If no log exists, create a new log
       const newDailyLog: DailyLog = {
         date: dateString,
         totalIntake,
         dailyNutrients,
         adherence,
-        score: calculateScore(adherence),
+        score: newScore,
         plan: currentPlanId
       };
 
       await setDoc(logsRef, newDailyLog);
+
+      updateUserScore(newScore)
+
       console.log(`Created new daily nutrition log for user: ${userId}`);
     }
   } catch (error) {

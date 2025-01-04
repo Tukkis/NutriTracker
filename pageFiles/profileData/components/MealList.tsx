@@ -4,16 +4,12 @@ import { UserMeal, MealItem } from "@/types/interfaces";
 
 interface MealListProps {
   userMeals: UserMeal[];
-  onEditMeal: (meal: MealItem) => void;
-  onDeleteMeal: (meal: MealItem) => void;
+  onEditMeal: (meal: UserMeal) => void;
+  onDeleteMeal: (meal: UserMeal) => void;
 }
 
 // Render Meal Item
-const renderMealItem = (
-  { item }: { item: MealItem },
-  onEditMeal: (meal: MealItem) => void,
-  onDeleteMeal: (meal: MealItem) => void
-) => {
+const renderMealItem = ({ item }: { item: MealItem }) => {
   return (
     <View style={styles.mealContainer}>
       <Text style={styles.mealName}>{item.product_name}</Text>
@@ -26,15 +22,7 @@ const renderMealItem = (
         <Text style={styles.nutrientText}>Fats: {item.fat_value}/100g</Text>
       </View>
 
-      {/* Edit and Delete Buttons */}
-      <View style={styles.actionButtons}>
-        <Pressable style={styles.editButton} onPress={() => onEditMeal(item)}>
-          <Text style={styles.buttonText}>Edit</Text>
-        </Pressable>
-        <Pressable style={styles.deleteButton} onPress={() => onDeleteMeal(item)}>
-          <Text style={styles.buttonText}>Delete</Text>
-        </Pressable>
-      </View>
+      
     </View>
   );
 };
@@ -51,11 +39,20 @@ const MealList: React.FC<MealListProps> = ({ userMeals, onEditMeal, onDeleteMeal
           <FlatList
             data={item.meals}
             keyExtractor={(mealItem) => mealItem.product_name}
-            renderItem={({ item: mealItem }) => renderMealItem({ item: mealItem }, onEditMeal, onDeleteMeal)}
+            renderItem={({ item: mealItem }) => renderMealItem({ item: mealItem })}
           />
+          <View style={styles.actionButtons}>
+            <Pressable style={styles.editButton} onPress={() => onEditMeal(item)}>
+              <Text style={styles.buttonText}>Edit</Text>
+            </Pressable>
+            <Pressable style={styles.deleteButton} onPress={() => onDeleteMeal(item)}>
+              <Text style={styles.buttonText}>Delete</Text>
+            </Pressable>
+          </View>
         </View>
       )}
       contentContainerStyle={styles.flatListContainer}
+      ListEmptyComponent={<Text style={styles.emptyText}>No plans available</Text>}
     />
   );
 };
@@ -74,6 +71,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     marginBottom: 8,
+  },
+  emptyText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#888",
   },
   mealDescription: {
     fontSize: 14,

@@ -1,18 +1,22 @@
-import { View, Text, StyleSheet, SafeAreaView, Dimensions, FlatList } from "react-native";
-import { Link, Stack } from "expo-router";
+import { View, Text, StyleSheet, SafeAreaView, Dimensions, Button } from "react-native";
+import { Stack, useRouter } from "expo-router";
 import * as Progress from 'react-native-progress';
 
 import { useEffect, useState } from "react";
 
 import { useDailyLogContext } from "../../contexts/LogContext";
+import { usePlanContext } from "@/contexts/PlanContext";
+
 import { updateChallengeProgress } from "@/firebase/funcs/updateChallengeProgress";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 export default function Home() {
   const { todaysLog } = useDailyLogContext();
+  const { currentPlanId, plans } = usePlanContext();
   const [isAppLaunched, setIsAppLaunched] = useState(false);
 
+  const router = useRouter();
 
   // Runs when the app is first launched
   useEffect(() => {
@@ -23,6 +27,22 @@ export default function Home() {
     }
   }, [isAppLaunched]); // Only trigger when app is launched
 
+  const handleNavigateAddPlan = () => {
+    router.push('/planPages/addPlan');
+  };
+
+  // If there is no current plan, render only the Add Plan button
+  if (currentPlanId === null) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Stack.Screen options={{ title: "Home", headerShown: false }} />
+        <Text style={styles.title}>Nutri tracker</Text>
+        <Button title="Add Plan" onPress={handleNavigateAddPlan} />
+      </SafeAreaView>
+    );
+  }
+
+  // Normal home screen rendering if currentPlanId exists
   return (
     <SafeAreaView style={styles.container}>
       <Stack.Screen options={{ title: "Home", headerShown: false }} />
@@ -109,7 +129,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "black",
-    justifyContent: "space-around",
+    justifyContent: "center", // Center content
     paddingVertical: 80,
   },
   title: {
@@ -121,31 +141,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 10
   },
-  buttonStyle: {
-    color: "#0E7AFE",
-    fontSize: 20,
-    textAlign: "center",
-  },
-  log: {
-    margin: 10,
-    width: width* 0.7,
-    padding: 5,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    elevation: 3,
-  },
-  current: {
-    margin: 10,
-    width: width* 0.9,
-    padding: 10,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    elevation: 3,
-  },
-  logtext: {
-    fontSize: 16,
-  },
-  text :{
+  text: {
     fontSize: 16,
     marginBottom: 4,
   },
@@ -156,5 +152,13 @@ const styles = StyleSheet.create({
   },
   nutrient: {
     alignItems: 'center',
+  },
+  current: {
+    margin: 10,
+    width: width * 0.9,
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    elevation: 3,
   },
 });

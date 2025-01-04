@@ -56,6 +56,7 @@ export default function RootLayout() {
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="newMealPages/index" options={{ headerShown: false }} />
+              <Stack.Screen name="newMealPages/editMeal" options={{ headerShown: false }} />
               <Stack.Screen name="planPages/addPlan" options={{ headerShown: false }} />
               <Stack.Screen name="planPages/editPlan" options={{ headerShown: false }} />
               <Stack.Screen name="+not-found" />
