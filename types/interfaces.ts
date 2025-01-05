@@ -59,6 +59,7 @@ export interface ChallengeContextType {
     currentChallenge: UserChallenge | null; 
     setCurrentChallenge: React.Dispatch<React.SetStateAction<UserChallenge | null>>; 
     addChallenge: (challenge: UserChallenge) => void; 
+    fetchChallenges: () => void;
   }
 
 interface Product {

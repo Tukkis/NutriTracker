@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, SafeAreaView, Dimensions, Button } from "react-native";
+import React from 'react'
+import { View, Text, StyleSheet, SafeAreaView, Dimensions, Button, ActivityIndicator, ScrollView  } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import * as Progress from 'react-native-progress';
 
@@ -16,21 +17,28 @@ const { width } = Dimensions.get("window");
 export default function Home() {
   const { todaysLog, userScore, dailyLogs } = useDailyLogContext();
   const { currentPlanId, plans } = usePlanContext();
-  const { currentChallenge } = useChallengeContext();
+  const { currentChallenge, fetchChallenges } = useChallengeContext();
 
   const [currentPlan, setCurrentPlan] = useState<UserPlan|undefined>(undefined)
+  const [loading, setLoading] = useState(true);
   const [isAppLaunched, setIsAppLaunched] = useState(false);
 
   const router = useRouter();
 
-  // Runs when the app is first launched
   useEffect(() => {
     if (!isAppLaunched) {
-      // This is the first time the app is launched
       updateChallengeProgress(dailyLogs[0]);
-      setIsAppLaunched(true);  // Mark that the app has launched
+      setIsAppLaunched(true); 
+    } else {
+      fetchChallenges()
     }
-  }, [isAppLaunched]); // Only trigger when app is launched
+  }, [isAppLaunched]); 
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);  // Set loading to false after 1
+    }, 500); 
+  }, []);
 
   useEffect(() => {
     const foundPlan = plans.find(
@@ -56,89 +64,95 @@ export default function Home() {
 
   // Normal home screen rendering if currentPlanId exists
   return (
-    <SafeAreaView style={styles.container}>
-      <Stack.Screen options={{ title: "Home", headerShown: false }} />
-      <Text style={styles.title}>Nutri tracker</Text>
-      <Text style={styles.header}>UserScore: {userScore.toFixed(1)}</Text>
-      <View style={styles.currentLog}>
-        <Text style={styles.text}>Date: {todaysLog.date}</Text>
-        <View style={styles.adherenceContainer}>
-          <View style={styles.nutrient}>
-            <Text style={styles.text}>Energy</Text>
-            <Progress.Circle
-              size={50}
-              animated={false}
-              progress={todaysLog.adherence["energy-kcal"] / 100}
-              showsText={true}
-              formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
-              thickness={8}
-              borderWidth={0}
-              color={todaysLog.adherence["energy-kcal"] > 120 ? "red" : "#3b82f6"}
-              unfilledColor="#e0e0e0"
-            />
+    <>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+      <SafeAreaView style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <Stack.Screen options={{ title: "Home", headerShown: false }} />
+          <Text style={styles.title}>Nutri tracker</Text>
+          <Text style={styles.header}>UserScore: {userScore.toFixed(1)}</Text>
+          <View style={styles.currentLog}>
+            <Text style={styles.text}>Date: {todaysLog.date}</Text>
+            <View style={styles.adherenceContainer}>
+              <View style={styles.nutrient}>
+                <Text style={styles.text}>Energy</Text>
+                <Progress.Circle
+                  size={50}
+                  animated={false}
+                  progress={todaysLog.adherence["energy-kcal"] / 100}
+                  showsText={true}
+                  formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
+                  thickness={8}
+                  borderWidth={0}
+                  color={todaysLog.adherence["energy-kcal"] > 120 ? "red" : "#3b82f6"}
+                  unfilledColor="#e0e0e0"
+                />
+              </View>
+              <View style={styles.nutrient}>
+                <Text style={styles.text}>Carbs</Text>
+                <Progress.Circle
+                  size={50}
+                  animated={false}
+                  progress={todaysLog.adherence.carbohydrates_value / 100}
+                  showsText={true}
+                  formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
+                  thickness={8}
+                  borderWidth={0}
+                  color={todaysLog.adherence.carbohydrates_value > 120 ? "red" : "#3b82f6"}
+                  unfilledColor="#e0e0e0"
+                />
+              </View>
+              <View style={styles.nutrient}>
+                <Text style={styles.text}>Proteins</Text>
+                <Progress.Circle
+                  size={50}
+                  animated={false}
+                  progress={todaysLog.adherence.proteins_value / 100}
+                  showsText={true}
+                  formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
+                  thickness={8}
+                  borderWidth={0}
+                  color={todaysLog.adherence.proteins_value > 120 ? "red" : "#3b82f6"}
+                  unfilledColor="#e0e0e0"
+                />
+              </View>
+              <View style={styles.nutrient}>
+                <Text style={styles.text}>Fats</Text>
+                <Progress.Circle
+                  size={50}
+                  animated={false}
+                  progress={todaysLog.adherence.fat_value / 100} 
+                  showsText={true}
+                  formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
+                  thickness={8}
+                  borderWidth={0}
+                  color={todaysLog.adherence.fat_value > 120 ? "red" : "#3b82f6"}
+                  unfilledColor="#e0e0e0"
+                />
+              </View>
+            </View>
+            <View style={styles.nutrient}>
+              <Text style={styles.text}>Score</Text>
+              <Progress.Bar
+                  width={90}
+                  animated={false}
+                  progress={todaysLog.score / 100} 
+                  borderWidth={0}
+                  color="#3b82f6"
+                  unfilledColor="#e0e0e0"
+                />
+            </View>
           </View>
-          <View style={styles.nutrient}>
-            <Text style={styles.text}>Carbs</Text>
-            <Progress.Circle
-              size={50}
-              animated={false}
-              progress={todaysLog.adherence.carbohydrates_value / 100}
-              showsText={true}
-              formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
-              thickness={8}
-              borderWidth={0}
-              color={todaysLog.adherence.carbohydrates_value > 120 ? "red" : "#3b82f6"}
-              unfilledColor="#e0e0e0"
-            />
-          </View>
-          <View style={styles.nutrient}>
-            <Text style={styles.text}>Proteins</Text>
-            <Progress.Circle
-              size={50}
-              animated={false}
-              progress={todaysLog.adherence.proteins_value / 100}
-              showsText={true}
-              formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
-              thickness={8}
-              borderWidth={0}
-              color={todaysLog.adherence.proteins_value > 120 ? "red" : "#3b82f6"}
-              unfilledColor="#e0e0e0"
-            />
-          </View>
-          <View style={styles.nutrient}>
-            <Text style={styles.text}>Fats</Text>
-            <Progress.Circle
-              size={50}
-              animated={false}
-              progress={todaysLog.adherence.fat_value / 100} 
-              showsText={true}
-              formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
-              thickness={8}
-              borderWidth={0}
-              color={todaysLog.adherence.fat_value > 120 ? "red" : "#3b82f6"}
-              unfilledColor="#e0e0e0"
-            />
-          </View>
-        </View>
-        <View style={styles.nutrient}>
-          <Text style={styles.text}>Score</Text>
-          <Progress.Bar
-              width={90}
-              animated={false}
-              progress={todaysLog.score / 100} 
-              borderWidth={0}
-              color="#3b82f6"
-              unfilledColor="#e0e0e0"
-            />
-        </View>
-      </View>
-      {currentChallenge?<View style={styles.challengeItem}>
-          <Text style={styles.challengeTitle}>Challenge: {currentChallenge.name}</Text>
-          <Text>Status: {currentChallenge.completed ? "Completed" : "Not Completed"}</Text>
-          <Text>Progress: {currentChallenge.progress} Days</Text>
-          <Text>Gain 10 points for every day if completed successfully</Text>
-      </View> : ''}
-      <View style={styles.currentPlan}>
+          {currentChallenge?<View style={styles.challengeItem}>
+              <Text style={styles.planHeader}>Current Challenge:</Text>
+              <Text style={styles.challengeTitle}>Challenge: {currentChallenge.name}</Text>
+              <Text>Status: {currentChallenge.completed ? "Completed" : "Not Completed"}</Text>
+              <Text>Progress: {currentChallenge.progress} Days</Text>
+              <Text>Gain 10 points for every day if completed successfully</Text>
+          </View> : ''}
+          <View style={styles.currentPlan}>
             <Text style={styles.planHeader}>Current Plan:</Text>
             <Text style={styles.planTitle}>Plan ID: {currentPlan?.id}</Text>
             <Text>Goal: {currentPlan?.planData.goal}</Text>
@@ -148,17 +162,24 @@ export default function Home() {
             <Text>Daily Fat: {currentPlan?.planData.dailyNutrients?.fat_value} g</Text>
             <Text>Daily Carbs: {currentPlan?.planData.dailyNutrients?.carbohydrates_value} g</Text>
           </View>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
+    )}
+  </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
     backgroundColor: "black",
-    justifyContent: "center", // Center content
-    paddingVertical: 80,
+    justifyContent: "center", 
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    paddingHorizontal: 16, 
+    paddingTop: 80, 
+    paddingBottom: 20
   },
   title: {
     color: "white",
@@ -182,8 +203,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   currentLog: {
-    margin: 10,
-    width: width * 0.9,
+    marginVertical: 10,
     padding: 10,
     backgroundColor: '#fff',
     borderRadius: 10,

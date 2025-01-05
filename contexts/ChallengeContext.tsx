@@ -40,6 +40,7 @@ export const ChallengeProvider = ({ children }: { children: ReactNode }) => {
         currentChallenge,
         setCurrentChallenge,
         addChallenge,
+        fetchChallenges
       }}
     >
       {children}

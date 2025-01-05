@@ -48,7 +48,8 @@ export async function updateChallengeProgress(daysLog?:DailyLog): Promise<void> 
     const indexOfMeal = userChallengeData.name.indexOf("meal")
 
     if(updatedLastTracked === formattedToday || updatedCompleted){
-      return
+      console.log("No update")
+      return;
     }
     
     if(today > parseDate(userChallengeData.endDate)){
@@ -98,9 +99,12 @@ export async function updateChallengeProgress(daysLog?:DailyLog): Promise<void> 
       updatedProgress += 1;
       }
       updatedLastTracked = formattedToday;
+
+      console.log(updatedLastTracked)
     }
 
-    if(isOlderThanYesterday(formattedToday)){
+    if(isOlderThanYesterday(updatedLastTracked)){
+      console.log("last updated is older than yesterday")
         const yesterday = new Date(today)
         yesterday.setDate(today.getDate() - 1);
         const formattedYesterday = formatDate(yesterday);
