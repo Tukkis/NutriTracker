@@ -6,11 +6,7 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../firestore"; 
 import { updateUserScore } from "./updateUserScore";
 import { calculateScore } from "../helpers/calculateScore";
-
-function calculateAdherence(actual: number, goal: number): number {
-  if (goal === 0) return actual === 0 ? 100 : 0;
-  return Math.min(100, (actual / goal) * 100);
-}
+import { calculateAdherence } from "../helpers/caclulateAdherence";
 
 async function logMeal(userId: string, mealData: MealItem[]) {
   const now = new Date();

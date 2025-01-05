@@ -23,6 +23,9 @@ export const renderPlanItem = ({
       <Text>Goal: {item.planData.goal}</Text>
       <Text>Intensity: {item.planData.intensity}</Text>
       <Text>Daily Calories: {item.planData.dailyNutrients?.["energy-kcal"]} kcal</Text>
+      <Text>Daily Protein: {item.planData.dailyNutrients?.proteins_value} g</Text>
+      <Text>Daily Fat: {item.planData.dailyNutrients?.fat_value} g</Text>
+      <Text>Daily Carbs: {item.planData.dailyNutrients?.carbohydrates_value} g</Text>
 
       <View style={styles.actionButtons}>
         <Pressable style={styles.editButton} onPress={() => handlePlanEdit(item)}>

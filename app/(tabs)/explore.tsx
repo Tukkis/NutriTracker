@@ -19,7 +19,7 @@ export default function TabTwoScreen() {
   const [activeTab, setActiveTab] = useState<DataTab>("plans"); 
   const [logsForCurrentPlan, setLogsForCurrentPlan] = useState<DailyLog[]>([]);
 
-  const { challenges } = useChallengeContext();
+  const { challenges, currentChallenge } = useChallengeContext();
   const { meals, setSelectedMeal } =  useMealContext();
   const { plans, setPlans, currentPlanId, setSelectedPlan } =  usePlanContext();
   const { dailyLogs, setDailyLogs } = useDailyLogContext();
@@ -136,7 +136,10 @@ export default function TabTwoScreen() {
           <FlatList
           data={challenges}
           keyExtractor={(item) => item.id || Math.random().toString()}//if id missing 
-          renderItem={({ item }) => renderChallengeItem({ item })}
+          renderItem={({ item }) => renderChallengeItem({ 
+            item,
+            currentChallenge
+          })}
           ListEmptyComponent={<Text style={styles.emptyText}>No challenges available</Text>}
           />
         );

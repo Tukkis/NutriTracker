@@ -5,11 +5,7 @@ import { getUsersPlanById } from "./getPlanById";
 import { getLogForDay } from "./getLogForDay";
 import { updateUserScore } from "./updateUserScore";
 import { calculateScore } from "../helpers/calculateScore";
-
-function calculateAdherence(actual: number, goal: number): number {
-  if (goal === 0) return actual === 0 ? 100 : 0;
-  return Math.min(100, (actual / goal) * 100);
-}
+import { calculateAdherence } from "../helpers/caclulateAdherence";
 
 async function updateLog(userId: string, oldMeal: UserMeal, updatedMeal: MealItem[]) {
   //Get log for day
@@ -26,6 +22,8 @@ async function updateLog(userId: string, oldMeal: UserMeal, updatedMeal: MealIte
     console.log(`No plan found`);
     return;
   }
+
+  const dateString = oldMeal.date.replace(/\//g, "-");
 
   const { dailyNutrients }: { dailyNutrients: Nutrients } = userPlan.planData;
 
@@ -55,7 +53,7 @@ async function updateLog(userId: string, oldMeal: UserMeal, updatedMeal: MealIte
     totalIntake.fat_value -= (item.fat_value * amountInGrams) / 100;
   });
 
-  const logsRef = doc(db, `users/${userId}/dailyLogs/${oldMeal.date}`);
+  const logsRef = doc(db, `users/${userId}/dailyLogs/${dateString}`);
 
   try {
     if (mealsLog) {

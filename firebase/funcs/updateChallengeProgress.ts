@@ -68,36 +68,36 @@ export async function updateChallengeProgress(daysLog?:DailyLog): Promise<void> 
       let didFailToMeetTarget : boolean = false;
 
       nutrientKeys.forEach(key => {
-          const targetValue = userChallengeData.targetNutrients[key];
-          const goalValue = daysLog.dailyNutrients[key];
-          const intakeValue = daysLog.totalIntake[key];
+        const targetValue = userChallengeData.targetNutrients[key];
+        const goalValue = daysLog.dailyNutrients[key];
+        const intakeValue = daysLog.totalIntake[key];
 
-          // User needs to be below or equal to the goal
-          if (targetValue < -50) {
-            if (intakeValue >= goalValue) {
-              didFailToMeetTarget = true;
-            }
-          } 
-          // User needs to exceed or equal goal
-          else if (targetValue > 50) {
-            if (intakeValue <= goalValue) {
-              didFailToMeetTarget = true;
-            }
-          } 
-          // User needs to be between /2 of the challenges targetValue tolerance from goal
-          else {
-            const minRange = goalValue * (1 - targetValue / 2);
-            const maxRange = goalValue * (1 + targetValue / 2); 
-            if (intakeValue <= minRange && intakeValue >= maxRange) {
-              didFailToMeetTarget = true;
-            }
+        // User needs to be below or equal to the goal
+        if (targetValue < -50) {
+          if (intakeValue >= goalValue) {
+            didFailToMeetTarget = true;
           }
-        });
-
-        if (!didFailToMeetTarget){
-        updatedProgress += 1;
+        } 
+        // User needs to exceed or equal goal
+        else if (targetValue > 50) {
+          if (intakeValue <= goalValue) {
+            didFailToMeetTarget = true;
+          }
+        } 
+        // User needs to be between /2 of the challenges targetValue tolerance from goal
+        else {
+          const minRange = goalValue * (1 - targetValue / 2);
+          const maxRange = goalValue * (1 + targetValue / 2); 
+          if (intakeValue <= minRange && intakeValue >= maxRange) {
+            didFailToMeetTarget = true;
+          }
         }
-        updatedLastTracked = formattedToday;
+      });
+
+      if (!didFailToMeetTarget){
+      updatedProgress += 1;
+      }
+      updatedLastTracked = formattedToday;
     }
 
     if(isOlderThanYesterday(formattedToday)){

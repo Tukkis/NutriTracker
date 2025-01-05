@@ -14,7 +14,7 @@ import { useChallengeContext } from "@/contexts/ChallengeContext";
 const { width } = Dimensions.get("window");
 
 export default function Home() {
-  const { todaysLog, userScore } = useDailyLogContext();
+  const { todaysLog, userScore, dailyLogs } = useDailyLogContext();
   const { currentPlanId, plans } = usePlanContext();
   const { currentChallenge } = useChallengeContext();
 
@@ -27,7 +27,7 @@ export default function Home() {
   useEffect(() => {
     if (!isAppLaunched) {
       // This is the first time the app is launched
-      updateChallengeProgress(todaysLog);
+      updateChallengeProgress(dailyLogs[0]);
       setIsAppLaunched(true);  // Mark that the app has launched
     }
   }, [isAppLaunched]); // Only trigger when app is launched
@@ -59,7 +59,7 @@ export default function Home() {
     <SafeAreaView style={styles.container}>
       <Stack.Screen options={{ title: "Home", headerShown: false }} />
       <Text style={styles.title}>Nutri tracker</Text>
-      <Text style={styles.header}>UserScore: {userScore}</Text>
+      <Text style={styles.header}>UserScore: {userScore.toFixed(1)}</Text>
       <View style={styles.currentLog}>
         <Text style={styles.text}>Date: {todaysLog.date}</Text>
         <View style={styles.adherenceContainer}>
@@ -73,7 +73,7 @@ export default function Home() {
               formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
               thickness={8}
               borderWidth={0}
-              color="#3b82f6"
+              color={todaysLog.adherence["energy-kcal"] > 120 ? "red" : "#3b82f6"}
               unfilledColor="#e0e0e0"
             />
           </View>
@@ -87,7 +87,7 @@ export default function Home() {
               formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
               thickness={8}
               borderWidth={0}
-              color="#3b82f6"
+              color={todaysLog.adherence.carbohydrates_value > 120 ? "red" : "#3b82f6"}
               unfilledColor="#e0e0e0"
             />
           </View>
@@ -101,7 +101,7 @@ export default function Home() {
               formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
               thickness={8}
               borderWidth={0}
-              color="#3b82f6"
+              color={todaysLog.adherence.proteins_value > 120 ? "red" : "#3b82f6"}
               unfilledColor="#e0e0e0"
             />
           </View>
@@ -115,7 +115,7 @@ export default function Home() {
               formatText={(progress) => `${(progress * 100).toFixed(1)}%`}
               thickness={8}
               borderWidth={0}
-              color="#3b82f6"
+              color={todaysLog.adherence.fat_value > 120 ? "red" : "#3b82f6"}
               unfilledColor="#e0e0e0"
             />
           </View>
@@ -144,6 +144,9 @@ export default function Home() {
             <Text>Goal: {currentPlan?.planData.goal}</Text>
             <Text>Intensity: {currentPlan?.planData.intensity}</Text>
             <Text>Daily Calories: {currentPlan?.planData.dailyNutrients?.["energy-kcal"]} kcal</Text>
+            <Text>Daily Protein: {currentPlan?.planData.dailyNutrients?.proteins_value} g</Text>
+            <Text>Daily Fat: {currentPlan?.planData.dailyNutrients?.fat_value} g</Text>
+            <Text>Daily Carbs: {currentPlan?.planData.dailyNutrients?.carbohydrates_value} g</Text>
           </View>
     </SafeAreaView>
   );
