@@ -3,7 +3,11 @@ import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firestore";
 
-export default function Login() {
+interface LoginProps {
+  onToggleRegister: () => void;
+}
+
+export default function Login({ onToggleRegister }: LoginProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -44,6 +48,7 @@ export default function Login() {
       />
 
       <Button title="Login" onPress={handleLogin} />
+      <Button title="Register" onPress={onToggleRegister} />
     </View>
   );
 };

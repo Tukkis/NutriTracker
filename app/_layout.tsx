@@ -12,6 +12,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/firestore";
 import Login from "./login"; 
+import Register from "./register"; // Import the Register screen
 import { DailyLogProvider } from "@/contexts/LogContext";
 import { ChallengeProvider } from "@/contexts/ChallengeContext";
 
@@ -24,6 +25,7 @@ export default function RootLayout() {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [showRegister, setShowRegister] = useState(false);
 
   useEffect(() => {
     if (loaded) {
@@ -45,8 +47,12 @@ export default function RootLayout() {
   }
 
   if (!isAuthenticated) {
-    // Render login screen if user is not authenticated
-    return <Login />;
+    // Show login or registration based on state
+    return showRegister ? (
+      <Register />
+    ) : (
+      <Login onToggleRegister={() => setShowRegister(true)} />
+    );
   }
 
   return (
