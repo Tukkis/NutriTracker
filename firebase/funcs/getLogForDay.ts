@@ -4,6 +4,9 @@ import { getCurrentUserId } from "./getCurrentUserId";
 import { DailyLog, Nutrients } from "@/types/interfaces";
 
 export const getLogForDay = async (dateString: string): Promise<DailyLog | null> => {
+
+  
+
   try {
     const userId = await getCurrentUserId();
     if (!userId) {
@@ -11,17 +14,19 @@ export const getLogForDay = async (dateString: string): Promise<DailyLog | null>
       return null;
     }
 
+    const formattedDate = dateString.replace(/\//g, "-");
+
     // Reference to the user's dailyLogs subcollection
     const dailyLogsRef = collection(db, `users/${userId}/dailyLogs`);
 
     // Query to get the log for the specific date (using where to filter by dateString)
-    const dailyLogQuery = query(dailyLogsRef, where("date", "==", dateString));
+    const dailyLogQuery = query(dailyLogsRef, where("date", "==", formattedDate));
 
     // Fetch the documents
     const querySnapshot = await getDocs(dailyLogQuery);
 
     if (querySnapshot.empty) {
-      console.log(`No logs found for the date ${dateString}.`);
+      console.log(`No logs found for the date ${formattedDate}.`);
       return null;
     }
 

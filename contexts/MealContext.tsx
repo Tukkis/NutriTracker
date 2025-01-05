@@ -17,11 +17,11 @@ export const MealProvider = ({ children }: { children: ReactNode }) => {
     amount: 0
   });
 
-  const addMeal = (newMeal: MealItem) => {
+  const addMealItem = (newMeal: MealItem) => {
     setMeal((prevMeals) => [...prevMeals, newMeal]);
   };
   
-  const removeMeal = (mealIndex: number) => {
+  const removeMealItem = (mealIndex: number) => {
     setMeal((prevMeals) => prevMeals.filter((_, index) => index !== mealIndex));
   };
 
@@ -39,7 +39,7 @@ export const MealProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <MealContext.Provider value={{ meal, setMeal, selectedMeal, setSelectedMeal, mealItem, setMealItem, addMeal, removeMeal, meals, setMeals }}>
+    <MealContext.Provider value={{ meal, setMeal, fetchMeals, selectedMeal, setSelectedMeal, mealItem, setMealItem, addMealItem, removeMealItem, meals, setMeals }}>
       {children}
     </MealContext.Provider>
   );

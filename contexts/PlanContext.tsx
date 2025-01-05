@@ -30,12 +30,22 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchPlans = async () => {
     try {
-      const fetchedPlans = await getUsersPlans();
-      const currentPlan = await getCurrentPlanId()
-      setPlans(fetchedPlans);
-      setCurrentPlanID(currentPlan)
+        const fetchedPlans = await getUsersPlans();
+        const currentPlan = await getCurrentPlanId();
+
+        // Move the current plan to the top
+        const currentPlanData = fetchedPlans.find(plan => plan.id === currentPlan);
+        const otherPlans = fetchedPlans.filter(plan => plan.id !== currentPlan);
+
+        if (currentPlanData) {
+            setPlans([currentPlanData, ...otherPlans]);
+        } else {
+            setPlans(fetchedPlans); 
+        }
+
+        setCurrentPlanID(currentPlan);
     } catch (error) {
-      console.error("Error fetching user plans:", error);
+        console.error("Error fetching user plans:", error);
     }
   };
 

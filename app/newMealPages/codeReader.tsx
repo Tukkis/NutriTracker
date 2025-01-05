@@ -15,7 +15,7 @@ import fetchProductData from "../../pageFiles/newMeal/helpers/fetchproductdata";
 import { useMealContext } from "../../contexts/MealContext";
 import { MealItem } from "@/types/interfaces";
 
-export default function HomeScreen() {
+export default function CodeReader() {
   const qrLock = useRef(false);
   const appState = useRef(AppState.currentState);
   const { setMealItem } = useMealContext(); 

@@ -13,6 +13,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/firestore";
 import Login from "./login"; 
 import { DailyLogProvider } from "@/contexts/LogContext";
+import { ChallengeProvider } from "@/contexts/ChallengeContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -52,17 +53,19 @@ export default function RootLayout() {
     <MealProvider>
       <PlanProvider>
         <DailyLogProvider>
-          <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="newMealPages/index" options={{ headerShown: false }} />
-              <Stack.Screen name="newMealPages/editMeal" options={{ headerShown: false }} />
-              <Stack.Screen name="planPages/addPlan" options={{ headerShown: false }} />
-              <Stack.Screen name="planPages/editPlan" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style="auto" />
-          </ThemeProvider>
+          <ChallengeProvider>
+            <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="newMealPages/codeReader" options={{ headerShown: false }} />
+                <Stack.Screen name="newMealPages/editMeal" options={{ headerShown: false }} />
+                <Stack.Screen name="planPages/addPlan" options={{ headerShown: false }} />
+                <Stack.Screen name="planPages/editPlan" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+              <StatusBar style="auto" />
+            </ThemeProvider>
+          </ChallengeProvider>
         </DailyLogProvider>
       </PlanProvider>
     </MealProvider>

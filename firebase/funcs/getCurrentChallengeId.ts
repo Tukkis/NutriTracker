@@ -1,8 +1,14 @@
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firestore"; 
+import { getCurrentUserId } from "./getCurrentUserId";
 
-export async function getCurrentChallengeId(userId: string): Promise<any | null> {
+export async function getCurrentChallengeId(): Promise<any | null> {
   try {
+    const userId = await getCurrentUserId()
+    if (!userId){
+      console.log("No user logged in")
+      return;
+    }
     const userDocRef = doc(db, "users", userId);
     const userDoc = await getDoc(userDocRef);
 

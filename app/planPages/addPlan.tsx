@@ -8,12 +8,14 @@ import calculateDailyNutrients from "@/firebase/helpers/calculateDailyNutrients"
 import { KeyboardAvoidingView } from "react-native";
 
 import { usePlanContext } from "@/contexts/PlanContext";
+import { useChallengeContext } from "@/contexts/ChallengeContext";
 
 const localDate = new Date();
 localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset());
 
 export default function AddPlan() {
   const { addPlan } = usePlanContext();
+  const { addChallenge } = useChallengeContext();
   const [plan, setPlan] = useState<PlanData>({
     intensity: "moderate",
     startingWeight: 0,
@@ -57,7 +59,7 @@ export default function AddPlan() {
 
   const handleSavePlan = () => {
     if (validatePlan()) {
-      savePlan(plan, addPlan);
+      savePlan(plan, addPlan, addChallenge);
       router.push("/explore");
     } else {
       console.log("Plan validation failed.");

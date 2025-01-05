@@ -27,10 +27,11 @@ export interface MealContextType {
     setSelectedMeal: React.Dispatch<React.SetStateAction<UserMeal | null>>;
     mealItem: MealItem;
     setMealItem: React.Dispatch<React.SetStateAction<MealItem>>;
-    addMeal: (newMeal: MealItem) => void;
-    removeMeal: (mealIndex: number) => void;
+    addMealItem: (newMeal: MealItem) => void;
+    removeMealItem: (mealIndex: number) => void;
     meals: UserMeal[]; 
     setMeals: React.Dispatch<React.SetStateAction<UserMeal[]>>;
+    fetchMeals: () => void;
 }
 
 export interface PlanContextType {
@@ -49,8 +50,16 @@ export interface DailyLogContextType {
     setDailyLogs: React.Dispatch<React.SetStateAction<DailyLog[]>>;
     todaysLog: DailyLog;
     setTodaysLog: React.Dispatch<React.SetStateAction<DailyLog>>;
-  }
+    userScore: number;
+}
   
+export interface ChallengeContextType {
+    challenges: UserChallenge[];
+    setChallenges: React.Dispatch<React.SetStateAction<UserChallenge[]>>;
+    currentChallenge: UserChallenge | null; 
+    setCurrentChallenge: React.Dispatch<React.SetStateAction<UserChallenge | null>>; 
+    addChallenge: (challenge: UserChallenge) => void; 
+  }
 
 interface Product {
     product_name?: string;
@@ -120,7 +129,7 @@ export interface ChallengeData {
 }
 
 export interface UserChallenge {
-    id: string;
+    id?: string;
     challengeId: string;
     name: string;
     startDate: string;

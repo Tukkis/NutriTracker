@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { SafeAreaView, Text, View, Pressable, Button, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 import { UserPlan, DailyLog, DataTab, UserChallenge, UserMeal, MealItem } from "@/types/interfaces";
-import { getUserChallenges } from "@/firebase/funcs/getUserChallenges";
 import { useRouter } from "expo-router";
 
 import { useMealContext } from "@/contexts/MealContext";
 import { useDailyLogContext } from "../../contexts/LogContext";
 import { usePlanContext } from "@/contexts/PlanContext";
+import { useChallengeContext } from "@/contexts/ChallengeContext";
 
 import { renderLogItem } from "@/pageFiles/profileData/components/renderLogItem";
 import { renderPlanItem } from "@/pageFiles/profileData/components/renderPlanItem";
@@ -17,27 +17,15 @@ import MealList from "@/pageFiles/profileData/components/MealList"
 // Your existing TabTwoScreen component with additional tab functionality
 export default function TabTwoScreen() {
   const [activeTab, setActiveTab] = useState<DataTab>("plans"); 
-  const [loading, setLoading] = useState<boolean>(true);
   const [logsForCurrentPlan, setLogsForCurrentPlan] = useState<DailyLog[]>([]);
-  const [userChallenges, setUserChallenges] = useState<UserChallenge[]>([]);
 
+  const { challenges } = useChallengeContext();
   const { meals, setSelectedMeal } =  useMealContext();
   const { plans, setPlans, currentPlanId, setSelectedPlan } =  usePlanContext();
   const { dailyLogs, setDailyLogs } = useDailyLogContext();
 
   useEffect(() => {
-    setLoading(true);
-    getUserChallenges()
-      .then( fetchedChallenges=> {
-        setUserChallenges(fetchedChallenges);
-        setLogsForCurrentPlan(dailyLogs.filter(log => log.plan === currentPlanId));
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    setLogsForCurrentPlan(dailyLogs.filter(log => log.plan === currentPlanId));
   }, []);
 
   const router = useRouter(); 
@@ -135,7 +123,7 @@ export default function TabTwoScreen() {
           <View>
             <MealList
             userMeals={meals}
-            onEditMeal={(meal) => console.log(handleMealEdit(meal))}
+            onEditMeal={(meal) => handleMealEdit(meal)}
             onDeleteMeal={(meal) => console.log("Delete meal:", meal)}
             />
             <TouchableOpacity style={styles.fab} onPress={handleAddAction}>
@@ -146,10 +134,10 @@ export default function TabTwoScreen() {
       case "challenges":
         return (
           <FlatList
-          data={userChallenges}
-          keyExtractor={(item) => item.id} 
+          data={challenges}
+          keyExtractor={(item) => item.id || Math.random().toString()}//if id missing 
           renderItem={({ item }) => renderChallengeItem({ item })}
-          ListEmptyComponent={<Text style={styles.emptyText}>No logs available</Text>}
+          ListEmptyComponent={<Text style={styles.emptyText}>No challenges available</Text>}
           />
         );
       default:
@@ -171,9 +159,6 @@ export default function TabTwoScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {loading ? (
-        <ActivityIndicator size="large" color="#007BFF" />
-      ) : (
         <View style={{ flex: 1 }}>
           <View style={styles.tabHeader}>
             <Pressable
@@ -205,7 +190,6 @@ export default function TabTwoScreen() {
             {renderTabContent()}
           </View>
         </View>
-      )}
     </SafeAreaView>
   );
 }

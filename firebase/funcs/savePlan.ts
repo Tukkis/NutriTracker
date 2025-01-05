@@ -1,9 +1,10 @@
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
 import { db } from "../firestore";
 import { getCurrentUserId } from "./getCurrentUserId";
-import { PlanData, UserPlan } from "@/types/interfaces";
+import { PlanData, UserChallenge, UserPlan } from "@/types/interfaces";
+import { generateUserChallenge } from "./generateUserChallenge";
 
-export default async function savePlan(plan: PlanData, addPlan: (newPlan: UserPlan) => void) {
+export default async function savePlan(plan: PlanData, addPlan: (newPlan: UserPlan) => void, addChallenge: (challenge: UserChallenge) => void) {
   try {
     const userId: string | null = getCurrentUserId();
     if (!userId) {
@@ -28,6 +29,20 @@ export default async function savePlan(plan: PlanData, addPlan: (newPlan: UserPl
     // Add the new plan to the state using the addPlan function
     addPlan(newPlan);
 
+    const userDocRef = doc(db, `users/${userId}`);
+    
+    // Update the user's document to set the currentChallenge field
+    await updateDoc(userDocRef, {
+        currentChallenge: docRef.id,  // Set the current challenge to the newly created challenge's ID
+    });
+
+    console.log("User's current challenge updated!");
+
+    const generatedChallenge = await generateUserChallenge(newPlan)
+    if(generatedChallenge){
+      addChallenge(generatedChallenge)
+    }
+    
     console.log("Document successfully written!", docRef.id);
   } catch (error) {
     console.error("Error writing document:", error);

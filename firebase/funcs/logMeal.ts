@@ -5,28 +5,11 @@ import { getUserDailyLogs } from "./getUserLogs";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../firestore"; 
 import { updateUserScore } from "./updateUserScore";
+import { calculateScore } from "../helpers/calculateScore";
 
 function calculateAdherence(actual: number, goal: number): number {
   if (goal === 0) return actual === 0 ? 100 : 0;
   return Math.min(100, (actual / goal) * 100);
-}
-
-function calculateScore(adherence: Nutrients): number {
-
-  const weights = {
-    "energy-kcal": 0.34,
-    carbohydrates_value: 0.22, 
-    proteins_value: 0.22, 
-    fat_value: 0.22, 
-  };
-
-  const score =
-  adherence["energy-kcal"] * weights["energy-kcal"] +
-  adherence.carbohydrates_value * weights.carbohydrates_value +
-  adherence.proteins_value * weights.proteins_value +
-  adherence.fat_value * weights.fat_value;
-
-  return Math.round(Math.max(0, Math.min(100, score)));
 }
 
 async function logMeal(userId: string, mealData: MealItem[]) {
@@ -107,7 +90,7 @@ async function logMeal(userId: string, mealData: MealItem[]) {
         score: updatedScore,
       }, { merge: true });
 
-      updateUserScore(updatedScore - dailyLog.score)
+      updateUserScore((updatedScore - dailyLog.score)/ 10)
 
       console.log(`Updated daily nutrition log for user: ${userId}`);
     } else {
@@ -132,7 +115,7 @@ async function logMeal(userId: string, mealData: MealItem[]) {
 
       await setDoc(logsRef, newDailyLog);
 
-      updateUserScore(newScore)
+      updateUserScore(newScore / 10)
 
       console.log(`Created new daily nutrition log for user: ${userId}`);
     }

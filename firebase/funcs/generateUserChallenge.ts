@@ -36,7 +36,7 @@ export async function generateUserChallenge(plan: UserPlan) {
         console.log("Document successfully written!", docRef.id)
 
 
-         const userDocRef = doc(db, `users/${userId}`);
+        const userDocRef = doc(db, `users/${userId}`);
 
         // Update the user's document to set the currentChallenge field
         await updateDoc(userDocRef, {
@@ -45,7 +45,10 @@ export async function generateUserChallenge(plan: UserPlan) {
 
         console.log("User's current challenge updated!");
 
-        return docRef
+        return {
+            ... newUserChallenge,
+            id: docRef.id
+        }
 
     } catch (error) {
         console.error("Error writing document: ", error);

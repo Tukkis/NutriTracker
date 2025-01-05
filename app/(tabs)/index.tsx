@@ -8,12 +8,17 @@ import { useDailyLogContext } from "../../contexts/LogContext";
 import { usePlanContext } from "@/contexts/PlanContext";
 
 import { updateChallengeProgress } from "@/firebase/funcs/updateChallengeProgress";
+import { UserPlan } from "@/types/interfaces";
+import { useChallengeContext } from "@/contexts/ChallengeContext";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 export default function Home() {
-  const { todaysLog } = useDailyLogContext();
+  const { todaysLog, userScore } = useDailyLogContext();
   const { currentPlanId, plans } = usePlanContext();
+  const { currentChallenge } = useChallengeContext();
+
+  const [currentPlan, setCurrentPlan] = useState<UserPlan|undefined>(undefined)
   const [isAppLaunched, setIsAppLaunched] = useState(false);
 
   const router = useRouter();
@@ -26,6 +31,13 @@ export default function Home() {
       setIsAppLaunched(true);  // Mark that the app has launched
     }
   }, [isAppLaunched]); // Only trigger when app is launched
+
+  useEffect(() => {
+    const foundPlan = plans.find(
+      (plan) => plan.id === currentPlanId
+    );
+    setCurrentPlan(foundPlan)
+  }, [currentPlanId]);
 
   const handleNavigateAddPlan = () => {
     router.push('/planPages/addPlan');
@@ -47,7 +59,8 @@ export default function Home() {
     <SafeAreaView style={styles.container}>
       <Stack.Screen options={{ title: "Home", headerShown: false }} />
       <Text style={styles.title}>Nutri tracker</Text>
-      <View style={styles.current}>
+      <Text style={styles.header}>UserScore: {userScore}</Text>
+      <View style={styles.currentLog}>
         <Text style={styles.text}>Date: {todaysLog.date}</Text>
         <View style={styles.adherenceContainer}>
           <View style={styles.nutrient}>
@@ -119,7 +132,19 @@ export default function Home() {
             />
         </View>
       </View>
-      <Text style={styles.header}>Past Logs:</Text>
+      {currentChallenge?<View style={styles.challengeItem}>
+          <Text style={styles.challengeTitle}>Challenge: {currentChallenge.name}</Text>
+          <Text>Status: {currentChallenge.completed ? "Completed" : "Not Completed"}</Text>
+          <Text>Progress: {currentChallenge.progress} Days</Text>
+          <Text>Gain 10 points for every day if completed successfully</Text>
+      </View> : ''}
+      <View style={styles.currentPlan}>
+            <Text style={styles.planHeader}>Current Plan:</Text>
+            <Text style={styles.planTitle}>Plan ID: {currentPlan?.id}</Text>
+            <Text>Goal: {currentPlan?.planData.goal}</Text>
+            <Text>Intensity: {currentPlan?.planData.intensity}</Text>
+            <Text>Daily Calories: {currentPlan?.planData.dailyNutrients?.["energy-kcal"]} kcal</Text>
+          </View>
     </SafeAreaView>
   );
 }
@@ -153,12 +178,44 @@ const styles = StyleSheet.create({
   nutrient: {
     alignItems: 'center',
   },
-  current: {
+  currentLog: {
     margin: 10,
     width: width * 0.9,
     padding: 10,
     backgroundColor: '#fff',
     borderRadius: 10,
     elevation: 3,
+  },
+  currentPlan: {
+    padding: 16,
+    marginBottom: 16,
+    borderRadius: 8,
+    backgroundColor: "#e8f5e9",
+    borderColor: "#4caf50",
+    borderWidth: 1,
+  },
+  planHeader: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#4caf50",
+    marginBottom: 8,
+  },
+  planTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  challengeItem: {
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 8,
+    backgroundColor: "#f9f9f9",
+    borderColor: "#ddd",
+    borderWidth: 1,
+  },
+  challengeTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 4,
   },
 });

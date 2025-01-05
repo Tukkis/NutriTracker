@@ -20,7 +20,7 @@ export async function updateChallengeProgress(daysLog?:DailyLog): Promise<void> 
         console.error("No user");
         return;
     }
-    const challengeId = await getCurrentChallengeId(userId)
+    const challengeId = await getCurrentChallengeId()
 
     // Reference to the user's challenge document
     const userChallengeRef = doc(db, `users/${userId}/challenges`, challengeId);
