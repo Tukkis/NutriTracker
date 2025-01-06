@@ -150,7 +150,7 @@ export default function Home() {
               <Text style={styles.challengeTitle}>Challenge: {currentChallenge.name}</Text>
               <Text>Status: {currentChallenge.completed ? "Completed" : "Not Completed"}</Text>
               <Text>Progress: {currentChallenge.progress} Days</Text>
-              <Text>Gain 10 points for every day if completed successfully</Text>
+              <Text>Gain 10 points for every day progressed</Text>
           </View> : ''}
           <View style={styles.currentPlan}>
             <Text style={styles.planHeader}>Current Plan:</Text>

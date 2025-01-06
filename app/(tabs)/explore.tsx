@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, Text, View, Pressable, Button, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
-import { UserPlan, DailyLog, DataTab, UserChallenge, UserMeal, MealItem } from "@/types/interfaces";
+import { UserPlan, DailyLog, DataTab, UserMeal } from "@/types/interfaces";
+import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
+import { signOut } from "firebase/auth"; 
+import { auth } from "@/firebase/firestore";
 
 import { useMealContext } from "@/contexts/MealContext";
 import { useDailyLogContext } from "../../contexts/LogContext";
@@ -13,20 +16,31 @@ import { renderLogItem } from "@/pageFiles/profileData/components/renderLogItem"
 import { renderPlanItem } from "@/pageFiles/profileData/components/renderPlanItem";
 import { renderChallengeItem } from "@/pageFiles/profileData/components/renderChallengeItem";
 import MealList from "@/pageFiles/profileData/components/MealList"
+import { generateUserChallenge } from "@/firebase/funcs/challenge/generateUserChallenge";
 
 // Your existing TabTwoScreen component with additional tab functionality
 export default function TabTwoScreen() {
   const [activeTab, setActiveTab] = useState<DataTab>("plans"); 
   const [logsForCurrentPlan, setLogsForCurrentPlan] = useState<DailyLog[]>([]);
 
-  const { challenges, currentChallenge } = useChallengeContext();
+  const { challenges, currentChallenge, addChallenge } = useChallengeContext();
   const { meals, setSelectedMeal } =  useMealContext();
   const { plans, setPlans, currentPlanId, setSelectedPlan } =  usePlanContext();
   const { dailyLogs, setDailyLogs } = useDailyLogContext();
 
   useEffect(() => {
     setLogsForCurrentPlan(dailyLogs.filter(log => log.plan === currentPlanId));
-  }, []);
+  }, [dailyLogs,currentPlanId]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      console.log("User signed out successfully");
+      router.replace("/login"); // Redirect to the login page
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   const router = useRouter(); 
 
@@ -50,10 +64,6 @@ export default function TabTwoScreen() {
     router.navigate('../newMealPages/editMeal');
   };
 
-  const handleLogDelete = (logDate: string) => {
-    setDailyLogs(dailyLogs => dailyLogs.filter(log => log.date !== logDate));
-    /* deletePlanFromDatabase(planId);  */
-  };
 
   const handleLogEdit = (logDate: string) => {
     /* navigation.navigate("EditPlan", { planId }); */
@@ -67,7 +77,7 @@ export default function TabTwoScreen() {
 
   const averageScore = calculateAverageScore(logsForCurrentPlan);
 
-  const handleAddAction = () => {
+  const handleAddAction = async () => {
     switch (activeTab) {
       case "plans":
         router.navigate("../planPages/addPlan");
@@ -75,6 +85,22 @@ export default function TabTwoScreen() {
       case "meals":
         router.navigate("/newMeal");
         break;
+        case "challenges":
+          const currentPlan = plans.find((plan) => plan.id === currentPlanId);
+          if (!currentPlan) {
+            console.log("No matching plan found for the currentPlanId.");
+            return;
+          }
+          try {
+            const generatedChallenge = await generateUserChallenge(currentPlan);
+            if (generatedChallenge) {
+              addChallenge(generatedChallenge);
+              console.log("Challenge added successfully.");
+            }
+          } catch (error) {
+            console.error("Error generating challenge:", error);
+          }
+          break;
       default:
         console.log("Unhandled tab");
     }
@@ -84,25 +110,20 @@ export default function TabTwoScreen() {
     switch (activeTab) {
       case "plans":
         return (
-          <View>
-            <FlatList
-              data={plans}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) =>
-                renderPlanItem({
-                  item,
-                  currentPlanId,
-                  handlePlanEdit,
-                  handlePlanDelete,
-                })
-              }
-              contentContainerStyle={styles.listContainer}
-              ListEmptyComponent={<Text style={styles.emptyText}>No plans available</Text>}
-            />
-            <TouchableOpacity style={styles.fab} onPress={handleAddAction}>
-              <AntDesign name="plus" size={24} color="#fff" />
-            </TouchableOpacity>
-          </View>
+          <FlatList
+            data={plans}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) =>
+              renderPlanItem({
+                item,
+                currentPlanId,
+                handlePlanEdit,
+                handlePlanDelete,
+              })
+            }
+            contentContainerStyle={styles.listContainer}
+            ListEmptyComponent={<Text style={styles.emptyText}>No plans available</Text>}
+          />
         );
       case "logs":
         return (
@@ -112,7 +133,6 @@ export default function TabTwoScreen() {
           renderItem={({ item }) => renderLogItem({ 
             item,
             handleLogEdit,
-            handleLogDelete, 
             })
           }
           ListEmptyComponent={<Text style={styles.emptyText}>No logs available</Text>}
@@ -120,16 +140,11 @@ export default function TabTwoScreen() {
         );
       case "meals":
         return (
-          <View>
             <MealList
             userMeals={meals}
             onEditMeal={(meal) => handleMealEdit(meal)}
             onDeleteMeal={(meal) => console.log("Delete meal:", meal)}
             />
-            <TouchableOpacity style={styles.fab} onPress={handleAddAction}>
-              <AntDesign name="plus" size={24} color="#fff" />
-            </TouchableOpacity>
-          </View>
         );
       case "challenges":
         return (
@@ -162,37 +177,29 @@ export default function TabTwoScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-        <View style={{ flex: 1 }}>
-          <View style={styles.tabHeader}>
-            <Pressable
-              style={[styles.tabButton, activeTab === "plans" && styles.activeTab]}
-              onPress={() => setActiveTab("plans")}
-            >
-              <Text style={styles.tabButtonText}>Plans</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.tabButton, activeTab === "logs" && styles.activeTab]}
-              onPress={() => setActiveTab("logs")}
-            >
-              <Text style={styles.tabButtonText}>Logs</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.tabButton, activeTab === "meals" && styles.activeTab]}
-              onPress={() => setActiveTab("meals")}
-            >
-              <Text style={styles.tabButtonText}>Meals</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.tabButton, activeTab === "challenges" && styles.activeTab]}
-              onPress={() => setActiveTab("challenges")}
-            >
-              <Text style={styles.tabButtonText}>Challenges</Text>
-            </Pressable>
-          </View>
-          <View style={styles.constentContainer}>
-            {renderTabContent()}
-          </View>
+      <View style={styles.header}>
+        <View style={styles.dropdownContainer}>
+          <Picker
+            selectedValue={activeTab}
+            onValueChange={(value) => setActiveTab(value)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Plans" value="plans" />
+            <Picker.Item label="Logs" value="logs" />
+            <Picker.Item label="Meals" value="meals" />
+            <Picker.Item label="Challenges" value="challenges" />
+          </Picker>
         </View>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Log Out</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ flex: 1 }}>{renderTabContent()}</View>
+      {activeTab !== "logs" && (
+        <TouchableOpacity style={styles.fab} onPress={handleAddAction}>
+          <AntDesign name="plus" size={24} color="#fff" />
+        </TouchableOpacity>
+      )}
     </SafeAreaView>
   );
 }
@@ -201,64 +208,37 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "black",
-    justifyContent: "center", 
+    justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 16,
+    paddingTop: 30,
   },
-  constentContainer: {
-    alignItems: "center",
-  },
-  tabHeader: {
+  header: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "90%",
     marginBottom: 16,
-    marginTop: 16,
   },
-  tabButton: {
+  dropdownContainer: {
+    flex: 1,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+  },
+  picker: {
+    height: 55,
+    color: "#000",
+  },
+  logoutButton: {
+    marginLeft: 16,
+    backgroundColor: "#FF4D4D",
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     borderRadius: 8,
-    backgroundColor: "#007BFF",
   },
-  tabButtonText: {
+  logoutText: {
     color: "#fff",
-    fontSize: 16,
-  },
-  activeTab: {
-    backgroundColor: "#0056b3",
-  },
-  planItem: {
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 8,
-    backgroundColor: "#f8f8f8",
-    borderColor: "#ddd",
-    borderWidth: 1,
-  },
-  currentPlan: {
-    padding: 16,
-    marginBottom: 16,
-    borderRadius: 8,
-    backgroundColor: "#e8f5e9",
-    borderColor: "#4caf50",
-    borderWidth: 1,
-  },
-  planHeader: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "bold",
-    color: "#4caf50",
-    marginBottom: 8,
-  },
-  noCurrentPlanText: {
-    textAlign: "center",
-    fontSize: 16,
-    color: "#888",
-    marginVertical: 16,
-  }, 
-  planTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 8,
   },
   listContainer: {
     padding: 16,

@@ -19,7 +19,7 @@ export const renderChallengeItem = ({
     <Text style={styles.title}>Challenge: {item.name}</Text>
     <Text>Status: {item.completed}</Text>
     <Text>Progress: {item.progress}</Text>
-    <Text>Gain 10 points for every day if completed successfully</Text>
+    <Text>Gain 10 points for every day progressed</Text>
   </View>
 )};
 

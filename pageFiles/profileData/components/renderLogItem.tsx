@@ -8,13 +8,11 @@ const { width } = Dimensions.get("window");
 interface RenderLogItemProps {
   item: DailyLog;
   handleLogEdit: (logDate: string) => void; 
-  handleLogDelete: (logDate: string) => void;
 }
 
 export const renderLogItem = ({
   item,
   handleLogEdit,
-  handleLogDelete,
 }: RenderLogItemProps) => {
   return (
     <View style={styles.log}>
@@ -91,9 +89,6 @@ export const renderLogItem = ({
       <View style={styles.actionButtons}>
         <Pressable style={styles.editButton} onPress={() => handleLogEdit(item.date)}>
           <Text style={styles.buttonText}>Edit</Text>
-        </Pressable>
-        <Pressable style={styles.deleteButton} onPress={() => handleLogDelete(item.date)}>
-          <Text style={styles.buttonText}>Delete</Text>
         </Pressable>
       </View>
     </View>

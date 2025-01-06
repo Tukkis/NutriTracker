@@ -10,7 +10,7 @@ export const ChallengeProvider = ({ children }: { children: ReactNode }) => {
   const [currentChallenge, setCurrentChallenge] = useState<UserChallenge | null>(null);
 
   const addChallenge = (newChallenge: UserChallenge) => {
-    setChallenges((prevChallenges) => [...prevChallenges, newChallenge]);
+    setChallenges((prevChallenges) => [ newChallenge, ...prevChallenges ]);
     setCurrentChallenge(newChallenge)
   };
 
