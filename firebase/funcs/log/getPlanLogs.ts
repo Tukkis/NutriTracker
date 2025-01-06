@@ -1,5 +1,5 @@
 import { DailyLog } from "@/types/interfaces"; // Ensure DailyLog is imported
-import { useDailyLogContext } from "../../contexts/LogContext"; 
+import { useDailyLogContext } from "../../../contexts/LogContext"; 
 
 export const getPlanLogs = (): Record<string, DailyLog[]>  => {
     const { dailyLogs } = useDailyLogContext();

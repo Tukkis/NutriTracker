@@ -1,9 +1,9 @@
 import { doc, addDoc, collection } from "firebase/firestore";
-import { db } from "../firestore";
-import { getCurrentUserId } from "./getCurrentUserId";
+import { db } from "../../firestore";
+import { getCurrentUserId } from "../getCurrentUserId";
 import { MealItem, UserMeal } from "@/types/interfaces";
-import formatMealDate from "../helpers/formatDate";
-import logMeal from "./logMeal";
+import formatMealDate from "../../helpers/formatDate";
+import logMeal from "../log/logMeal";
 
 export default async function saveMeal(meal: MealItem[]) {
     try {

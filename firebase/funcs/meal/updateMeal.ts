@@ -1,8 +1,8 @@
 import { doc, runTransaction } from "firebase/firestore";
-import { db } from "../firestore";
-import { getCurrentUserId } from "./getCurrentUserId";
+import { db } from "../../firestore";
+import { getCurrentUserId } from "../getCurrentUserId";
 import { MealItem, UserMeal } from "@/types/interfaces";
-import updateLog from "./updateLog";
+import updateLog from "../log/updateLog";
 
 export async function updateMeal(oldMeal: UserMeal | null, updatedMeal: MealItem[]) {
   if (!oldMeal) return;
@@ -16,7 +16,6 @@ export async function updateMeal(oldMeal: UserMeal | null, updatedMeal: MealItem
     const mealDocRef = doc(db, `users/${userId}/meals/${oldMeal.id}`);
 
     await runTransaction(db, async (transaction) => {
-      // Call `updateLog` with the transaction and other parameters
       await updateLog(transaction, userId, oldMeal, updatedMeal);
 
       // Update the meal document within the transaction

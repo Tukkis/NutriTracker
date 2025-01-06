@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { UserPlan, PlanContextType, PlanIntensity, ActivityLevel, Gender, PlanGoal } from "@/types/interfaces";
-import { getUsersPlans } from "@/firebase/funcs/getUserPlans";
-import { getCurrentPlanId } from "@/firebase/funcs/getCurrentPlanId";
+import { getUsersPlans } from "@/firebase/funcs/plan/getUserPlans";
+import { getCurrentPlanId } from "@/firebase/funcs/plan/getCurrentPlanId";
 
 const PlanContext = createContext<PlanContextType | undefined>(undefined);
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, SafeAreaView, Pressable, Button, FlatList, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform } from "react-native";
 import { useMealContext } from "../../contexts/MealContext";
 import { useRouter } from "expo-router";
-import { updateMeal } from "@/firebase/funcs/updateMeal";
+import { updateMeal } from "@/firebase/funcs/meal/updateMeal";
 import { MealItem } from "@/types/interfaces";
 
 

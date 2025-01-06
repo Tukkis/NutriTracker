@@ -1,8 +1,8 @@
 import { doc, addDoc, collection, updateDoc } from "firebase/firestore";
-import { db } from "../firestore";
+import { db } from "../../firestore";
 import { getChallenges } from "./getChallenges";
 import { UserPlan, UserChallenge } from "@/types/interfaces";
-import formatDate from "../helpers/formatDate";
+import formatDate from "../../helpers/formatDate";
 
 export async function generateUserChallenge(plan: UserPlan) {
     try {

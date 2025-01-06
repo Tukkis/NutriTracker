@@ -1,12 +1,12 @@
-import { MealItem, Nutrients, UserPlan, DailyLog } from "../../types/interfaces";
-import { getCurrentPlanId } from "./getCurrentPlanId"; 
-import { getUsersPlans } from "./getUserPlans"; 
+import { MealItem, Nutrients, UserPlan, DailyLog } from "../../../types/interfaces";
+import { getCurrentPlanId } from "../plan/getCurrentPlanId"; 
+import { getUsersPlans } from "../plan/getUserPlans"; 
 import { getUserDailyLogs } from "./getUserLogs"; 
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import { db } from "../firestore"; 
-import { updateUserScore } from "./updateUserScore";
-import { calculateScore } from "../helpers/calculateScore";
-import { calculateAdherence } from "../helpers/caclulateAdherence";
+import { db } from "../../firestore"; 
+import { updateUserScore } from "../updateUserScore";
+import { calculateScore } from "../../helpers/calculateScore";
+import { calculateAdherence } from "../../helpers/caclulateAdherence";
 
 async function logMeal(userId: string, mealData: MealItem[]) {
   const now = new Date();

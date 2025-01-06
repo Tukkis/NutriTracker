@@ -1,6 +1,6 @@
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firestore";
-import { getCurrentUserId } from "./getCurrentUserId";
+import { db } from "../../firestore";
+import { getCurrentUserId } from "../getCurrentUserId";
 import { UserPlan, PlanData, Nutrients } from "@/types/interfaces";
 
 export async function getUsersPlanById(planId: string): Promise<UserPlan | null> {

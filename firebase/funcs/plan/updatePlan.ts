@@ -1,6 +1,6 @@
 import { doc, setDoc } from "firebase/firestore";
-import { db } from "../firestore";
-import { getCurrentUserId } from "./getCurrentUserId";
+import { db } from "../../firestore";
+import { getCurrentUserId } from "../getCurrentUserId";
 import { UserPlan } from "@/types/interfaces";
 
 export async function updatePlan(userPlan: UserPlan, editPlan: (newPlan: UserPlan) => void) {

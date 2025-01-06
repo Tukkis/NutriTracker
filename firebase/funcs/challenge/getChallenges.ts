@@ -1,5 +1,5 @@
 import { collection, where, query,getDocs } from "firebase/firestore";
-import { db } from "../firestore";
+import { db } from "../../firestore";
 import { ChallengeData } from "@/types/interfaces";
 
 export async function getChallenges(intensity: string, goal: string) {

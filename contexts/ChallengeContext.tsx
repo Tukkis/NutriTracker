@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { UserChallenge, ChallengeContextType } from "../types/interfaces";
-import { getUserChallenges } from "@/firebase/funcs/getUserChallenges"; 
-import { getCurrentChallengeId } from "@/firebase/funcs/getCurrentChallengeId";
+import { getUserChallenges } from "@/firebase/funcs/challenge/getUserChallenges"; 
+import { getCurrentChallengeId } from "@/firebase/funcs/challenge/getCurrentChallengeId";
 
 const ChallengeContext = createContext<ChallengeContextType | undefined>(undefined);
 

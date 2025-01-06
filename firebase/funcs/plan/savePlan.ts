@@ -1,8 +1,8 @@
 import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
-import { db } from "../firestore";
-import { getCurrentUserId } from "./getCurrentUserId";
+import { db } from "../../firestore";
+import { getCurrentUserId } from "../getCurrentUserId";
 import { PlanData, UserChallenge, UserPlan } from "@/types/interfaces";
-import { generateUserChallenge } from "./generateUserChallenge";
+import { generateUserChallenge } from "../challenge/generateUserChallenge";
 
 export default async function savePlan(plan: PlanData, addPlan: (newPlan: UserPlan) => void, addChallenge: (challenge: UserChallenge) => void) {
   try {

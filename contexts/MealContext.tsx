@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { MealItem, MealContextType, UserMeal } from "../types/interfaces";
-import { getUsersMeals } from "@/firebase/funcs/getUsersMeals";
+import { getUsersMeals } from "@/firebase/funcs/meal/getUsersMeals";
 
 const MealContext = createContext<MealContextType | undefined>(undefined);
 

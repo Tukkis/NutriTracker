@@ -1,6 +1,6 @@
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../firestore";
-import { getCurrentUserId } from "./getCurrentUserId";
+import { db } from "../../firestore";
+import { getCurrentUserId } from "../getCurrentUserId";
 import { DailyLog, Nutrients } from "@/types/interfaces";
 
 export const getLogForDay = async (dateString: string): Promise<DailyLog | null> => {

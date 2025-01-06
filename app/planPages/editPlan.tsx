@@ -6,7 +6,7 @@ import { usePlanContext } from "@/contexts/PlanContext";
 import { useRouter } from "expo-router";
 import calculateDailyNutrients from "@/firebase/helpers/calculateDailyNutrients";  
 import { KeyboardAvoidingView } from "react-native";
-import { updatePlan } from "@/firebase/funcs/updatePlan";
+import { updatePlan } from "@/firebase/funcs/plan/updatePlan";
 
 const EditPlan = () => {
   const { selectedPlan, editPlan } = usePlanContext();

@@ -2,7 +2,7 @@ import { View, Text, TextInput, StyleSheet, SafeAreaView, Button, ScrollView, To
 import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { PlanData } from "@/types/interfaces";
-import savePlan from "@/firebase/funcs/savePlan";
+import savePlan from "@/firebase/funcs/plan/savePlan";
 import { useRouter } from "expo-router";
 import calculateDailyNutrients from "@/firebase/helpers/calculateDailyNutrients";  
 import { KeyboardAvoidingView } from "react-native";

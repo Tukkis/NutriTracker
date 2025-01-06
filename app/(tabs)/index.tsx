@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { useDailyLogContext } from "../../contexts/LogContext";
 import { usePlanContext } from "@/contexts/PlanContext";
 
-import { updateChallengeProgress } from "@/firebase/funcs/updateChallengeProgress";
+import { updateChallengeProgress } from "@/firebase/funcs/challenge/updateChallengeProgress";
 import { UserPlan } from "@/types/interfaces";
 import { useChallengeContext } from "@/contexts/ChallengeContext";
 

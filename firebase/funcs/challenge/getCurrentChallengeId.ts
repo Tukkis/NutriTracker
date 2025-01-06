@@ -1,6 +1,6 @@
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firestore"; 
-import { getCurrentUserId } from "./getCurrentUserId";
+import { db } from "../../firestore"; 
+import { getCurrentUserId } from "../getCurrentUserId";
 
 export async function getCurrentChallengeId(): Promise<any | null> {
   try {

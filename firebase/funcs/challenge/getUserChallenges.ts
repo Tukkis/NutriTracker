@@ -1,7 +1,7 @@
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firestore";
+import { db } from "../../firestore";
 import { UserChallenge } from "@/types/interfaces"; // Import the correct type
-import { getCurrentUserId } from "./getCurrentUserId";
+import { getCurrentUserId } from "../getCurrentUserId";
 
 export async function getUserChallenges(): Promise<UserChallenge[]> {
   

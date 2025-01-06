@@ -1,9 +1,9 @@
 import { doc } from "firebase/firestore";
-import { db } from "../firestore";
+import { db } from "../../firestore";
 import { DailyLog, MealItem, Nutrients, UserMeal } from "@/types/interfaces";
-import { getUsersPlanById } from "./getPlanById";
-import { calculateScore } from "../helpers/calculateScore";
-import { calculateAdherence } from "../helpers/caclulateAdherence";
+import { getUsersPlanById } from "../plan/getPlanById";
+import { calculateScore } from "../../helpers/calculateScore";
+import { calculateAdherence } from "../../helpers/caclulateAdherence";
 
 export default async function updateLog(
   transaction: any,

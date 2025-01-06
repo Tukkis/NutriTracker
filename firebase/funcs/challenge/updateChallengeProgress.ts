@@ -1,11 +1,11 @@
 import { doc, updateDoc, getDoc } from "firebase/firestore";
-import { db } from "../firestore";
+import { db } from "../../firestore";
 import { UserChallenge, Nutrients, DailyLog } from "@/types/interfaces";
-import formatDate from "../helpers/formatDate";
+import formatDate from "../../helpers/formatDate";
 import { getCurrentChallengeId } from "./getCurrentChallengeId";
-import isOlderThanYesterday from "../helpers/isOlderThanYesterday";
-import { getCurrentUserId } from "./getCurrentUserId";
-import { updateUserScore } from "./updateUserScore";
+import isOlderThanYesterday from "../../helpers/isOlderThanYesterday";
+import { getCurrentUserId } from "../getCurrentUserId";
+import { updateUserScore } from "../updateUserScore";
 
 
 const parseDate = (dateString: string): Date => {

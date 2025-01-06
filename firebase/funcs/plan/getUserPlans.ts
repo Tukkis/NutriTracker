@@ -1,6 +1,6 @@
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../firestore";
-import { getCurrentUserId } from "./getCurrentUserId";
+import { db } from "../../firestore";
+import { getCurrentUserId } from "../getCurrentUserId";
 import { UserPlan, PlanData, Nutrients } from "@/types/interfaces";
 
 
