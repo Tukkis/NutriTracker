@@ -49,7 +49,7 @@ export default function RootLayout() {
   if (!isAuthenticated) {
     // Show login or registration based on state
     return showRegister ? (
-      <Register />
+      <Register onToggleRegister={() => setShowRegister(false)} />
     ) : (
       <Login onToggleRegister={() => setShowRegister(true)} />
     );

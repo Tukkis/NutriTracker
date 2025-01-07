@@ -33,14 +33,21 @@ export default function TabTwoScreen() {
   }, [dailyLogs,currentPlanId]);
 
   const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      console.log("User signed out successfully");
-      router.replace("/login"); // Redirect to the login page
-    } catch (error) {
-      console.error("Error signing out:", error);
+    const isConfirmed = window.confirm("Are you sure you want to sign out?");
+  
+    if (isConfirmed) {
+      try {
+        await signOut(auth);
+        console.log("User signed out successfully");
+        router.replace("/login"); // Redirect to the login page
+      } catch (error) {
+        console.error("Error signing out:", error);
+      }
+    } else {
+      console.log("User canceled the logout");
     }
   };
+  
 
   const router = useRouter(); 
 
@@ -171,6 +178,9 @@ export default function TabTwoScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <Button title="Add Plan to start viewing personal data" onPress={handleNavigateAddPlan} />
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Log Out</Text>
+        </TouchableOpacity>
       </SafeAreaView>
     );
   }
@@ -197,8 +207,11 @@ export default function TabTwoScreen() {
       <View style={{ flex: 1 }}>{renderTabContent()}</View>
       {activeTab !== "logs" && (
         <TouchableOpacity style={styles.fab} onPress={handleAddAction}>
+        <View style={styles.buttonContent}>
+          <Text style={styles.buttonText}>Add {activeTab}</Text>
           <AntDesign name="plus" size={24} color="#fff" />
-        </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
       )}
     </SafeAreaView>
   );
@@ -252,12 +265,22 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 16,
     bottom: 66,
-    width: 56,
+    paddingHorizontal: 10,
     height: 56,
-    borderRadius: 28,
+    borderRadius: 28, 
     backgroundColor: "#007BFF",
     justifyContent: "center",
     alignItems: "center",
-    elevation: 4,
+    elevation: 6, 
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "bold",
+    marginRight: 10, 
+  },
+  buttonContent: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });

@@ -50,7 +50,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addPlan = (newPlan: UserPlan) => {
-    setPlans((prevPlans) => [...prevPlans, newPlan]);
+    setPlans((prevPlans) => [newPlan, ...prevPlans]);
     setCurrentPlanID(newPlan.id)
   };
 

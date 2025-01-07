@@ -33,7 +33,7 @@ export default async function savePlan(plan: PlanData, addPlan: (newPlan: UserPl
     
     // Update the user's document to set the currentChallenge field
     await updateDoc(userDocRef, {
-        currentChallenge: docRef.id,  // Set the current challenge to the newly created challenge's ID
+        currentPlan: docRef.id,  // Set the current challenge to the newly created challenge's ID
     });
 
     console.log("User's current challenge updated!");

@@ -140,13 +140,12 @@ export default function AddMeal() {
               </View>
             </View>
 
-            <Button title="Add Meal" onPress={handleAddMealItem} />
-            <Button title="Save Meal" onPress={handleSaveMeal} />
+            <Button title="Add item to Meal" onPress={handleAddMealItem} />
             <Pressable
               style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
               onPress={handleNavigation}
             >
-              <Text style={styles.buttonText}>Scan Code</Text>
+              <Text style={styles.buttonText}>Scan Barcode</Text>
             </Pressable>
           </View>
 
@@ -165,6 +164,7 @@ export default function AddMeal() {
               </View>
             )}
           />
+          <Button title="Save Meal" onPress={handleSaveMeal} />
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
     </SafeAreaView>

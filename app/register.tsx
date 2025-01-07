@@ -1,19 +1,14 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, StyleSheet, Text, Alert } from "react-native";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase/firestore";
+import { registerUser } from "@/firebase/funcs/registerUser";
 
-export default function Register() {
+interface RegisterProps {
+  onToggleRegister: () => void;
+}
+
+export default function Register({ onToggleRegister }: RegisterProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const handleRegister = async () => {
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-    } catch (error: any) {
-        Alert.alert("Login Failed", error.message);
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -33,7 +28,8 @@ export default function Register() {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Register" onPress={handleRegister} />
+      <Button title="Register" onPress={() => registerUser(email,password)} />
+      <Button title="Login" onPress={onToggleRegister} />
     </View>
   );
 }
