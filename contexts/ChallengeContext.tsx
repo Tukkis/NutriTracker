@@ -14,15 +14,28 @@ export const ChallengeProvider = ({ children }: { children: ReactNode }) => {
     setCurrentChallenge(newChallenge)
   };
 
+  const convertToDate = (dateString: string): Date => {
+    const [day, month, year] = dateString.split("/").map(Number);
+    return new Date(year, month - 1, day); 
+  };  
+
   const fetchChallenges = async () => {
     try {
       const fetchedChallenges = await getUserChallenges(); 
       const currentChallengeId = await getCurrentChallengeId()
-      setChallenges(fetchedChallenges);
+
       const currentChallenge = fetchedChallenges.find(
         (challenge) => challenge.id === currentChallengeId
       );
       setCurrentChallenge(currentChallenge || null)
+
+      const sortedChallenges = fetchedChallenges.sort((a, b) => {
+        const dateA = convertToDate(a.startDate);
+        const dateB = convertToDate(b.startDate);
+        return dateB.getTime() - dateA.getTime(); 
+      });
+
+      setChallenges(sortedChallenges)
     } catch (error) {
       console.error("Error fetching challenges:", error);
     }

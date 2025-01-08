@@ -160,7 +160,7 @@ export default function AddMeal() {
                 <Text>Protein: {item.proteins_value}</Text>
                 <Text>Fats: {item.fat_value}</Text>
                 <Text>Amount: {item.amount}</Text>
-                <Button title="Remove Meal" onPress={() => handleRemoveMealItem(Number(index))} />
+                <Button title="Remove Meal Item" onPress={() => handleRemoveMealItem(Number(index))} />
               </View>
             )}
           />

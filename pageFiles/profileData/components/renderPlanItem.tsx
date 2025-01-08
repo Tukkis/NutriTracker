@@ -5,14 +5,12 @@ interface RenderPlanItemProps {
   item: UserPlan;
   currentPlanId: string | null;
   handlePlanEdit: (plan: UserPlan) => void; 
-  handlePlanDelete: (planId: string) => void;
 }
 
 export const renderPlanItem = ({
   item,
   currentPlanId,
   handlePlanEdit,
-  handlePlanDelete,
 }: RenderPlanItemProps) => {
   const isCurrentPlan = currentPlanId === item.id;
 
@@ -30,9 +28,6 @@ export const renderPlanItem = ({
       <View style={styles.actionButtons}>
         <Pressable style={styles.editButton} onPress={() => handlePlanEdit(item)}>
           <Text style={styles.buttonText}>Edit</Text>
-        </Pressable>
-        <Pressable style={styles.deleteButton} onPress={() => handlePlanDelete(item.id)}>
-          <Text style={styles.buttonText}>Delete</Text>
         </Pressable>
       </View>
     </View>

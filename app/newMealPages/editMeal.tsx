@@ -147,7 +147,7 @@ export default function EditMeal() {
               />
             </View>
           </View>
-          <Button title="Add Meal" onPress={handleAddMeal} />
+          <Button title="Add Meal Item" onPress={handleAddMeal} />
           <Button title="Save Meal" onPress={handleUpdateMeal} />
           <Pressable
             style={({ pressed }) => [
@@ -171,7 +171,7 @@ export default function EditMeal() {
                 <Text>Fats: {item.fat_value}</Text>
                 <Text>Amount: {item.amount}</Text>
                 <Button
-                  title="Remove Meal"
+                  title="Remove Meal Item"
                   onPress={() => handleRemoveMealItem(Number(index))}
                 />
               </View>

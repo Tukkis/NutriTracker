@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { Nutrients, DailyLog } from "../types/interfaces"; // Assuming Nutrients and DailyLog are already defined
+import { DailyLog } from "../types/interfaces";
 import { DailyLogContextType } from "../types/interfaces";
 import { getUserDailyLogs } from "@/firebase/funcs/log/getUserLogs";
 import { getUserScore } from "@/firebase/funcs/getUserScore";

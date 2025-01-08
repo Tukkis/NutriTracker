@@ -29,16 +29,13 @@ export default function Home() {
     if (!isAppLaunched) {
       updateChallengeProgress(dailyLogs[0]);
       setIsAppLaunched(true); 
+      setTimeout(() => {
+        setLoading(false);  // Set loading to false after 1
+      }, 500); 
     } else {
       fetchChallenges()
     }
   }, [isAppLaunched]); 
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);  // Set loading to false after 1
-    }, 500); 
-  }, []);
 
   useEffect(() => {
     const foundPlan = plans.find(

@@ -55,7 +55,7 @@ export async function updateChallengeProgress(daysLog?:DailyLog): Promise<void> 
     if(today > parseDate(userChallengeData.endDate)){
       updatedCompleted = true
       updateUserScore(updatedProgress * 10)
-    } else if(indexOfMeal !== -1){
+    } else if(!daysLog && indexOfMeal !== -1){
       if (userChallengeData.dailyProgress < Number(userChallengeData.name.charAt(indexOfMeal - 2))) {
         updatedDailyProgress += 1; 
       } else {

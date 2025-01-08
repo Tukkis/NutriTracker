@@ -17,6 +17,7 @@ import { renderPlanItem } from "@/pageFiles/profileData/components/renderPlanIte
 import { renderChallengeItem } from "@/pageFiles/profileData/components/renderChallengeItem";
 import MealList from "@/pageFiles/profileData/components/MealList"
 import { generateUserChallenge } from "@/firebase/funcs/challenge/generateUserChallenge";
+import { deleteMeal } from "@/firebase/funcs/meal/deleteMeal";
 
 // Your existing TabTwoScreen component with additional tab functionality
 export default function TabTwoScreen() {
@@ -24,7 +25,7 @@ export default function TabTwoScreen() {
   const [logsForCurrentPlan, setLogsForCurrentPlan] = useState<DailyLog[]>([]);
 
   const { challenges, currentChallenge, addChallenge } = useChallengeContext();
-  const { meals, setSelectedMeal } =  useMealContext();
+  const { meals, setSelectedMeal, setMeals } =  useMealContext();
   const { plans, setPlans, currentPlanId, setSelectedPlan } =  usePlanContext();
   const { dailyLogs, setDailyLogs } = useDailyLogContext();
 
@@ -51,29 +52,19 @@ export default function TabTwoScreen() {
 
   const router = useRouter(); 
 
-  const handlePlanDelete = (planId: string) => {
-    setPlans(usersPlans => usersPlans.filter(plan => plan.id !== planId));
-    /* deletePlanFromDatabase(planId);  */
-  };
-
   const handlePlanEdit = (plan: UserPlan) => {
     setSelectedPlan(plan)
     router.navigate('../planPages/editPlan');
   };
 
-  const handleMealDelete = (planId: string) => {
-    setPlans(usersPlans => usersPlans.filter(plan => plan.id !== planId));
-    /* deletePlanFromDatabase(planId);  */
+  const handleMealDelete = (mealToDelete: UserMeal) => {
+    setMeals(meals => meals.filter(meal => meal.id !== mealToDelete.id));
+    deleteMeal(mealToDelete)
   };
 
   const handleMealEdit = (selectedMeal: UserMeal) => {
     setSelectedMeal(selectedMeal)
     router.navigate('../newMealPages/editMeal');
-  };
-
-
-  const handleLogEdit = (logDate: string) => {
-    /* navigation.navigate("EditPlan", { planId }); */
   };
   
   const calculateAverageScore = (logs: DailyLog[]): number => {
@@ -125,7 +116,6 @@ export default function TabTwoScreen() {
                 item,
                 currentPlanId,
                 handlePlanEdit,
-                handlePlanDelete,
               })
             }
             contentContainerStyle={styles.listContainer}
@@ -139,7 +129,6 @@ export default function TabTwoScreen() {
           keyExtractor={(item) => item.date} 
           renderItem={({ item }) => renderLogItem({ 
             item,
-            handleLogEdit,
             })
           }
           ListEmptyComponent={<Text style={styles.emptyText}>No logs available</Text>}
@@ -150,7 +139,7 @@ export default function TabTwoScreen() {
             <MealList
             userMeals={meals}
             onEditMeal={(meal) => handleMealEdit(meal)}
-            onDeleteMeal={(meal) => console.log("Delete meal:", meal)}
+            onDeleteMeal={(meal) => handleMealDelete(meal)}
             />
         );
       case "challenges":
@@ -223,7 +212,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: 30,
+    paddingTop: 42,
   },
   header: {
     flexDirection: "row",
