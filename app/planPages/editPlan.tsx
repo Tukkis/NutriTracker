@@ -60,7 +60,7 @@ const EditPlan = () => {
       }
       updatePlan(updatedPlan, editPlan);
       console.log("Plan updated successfully.");
-      router.push("/explore");
+      router.push("/personal");
     } else {
       console.log("Plan validation failed.");
     }
