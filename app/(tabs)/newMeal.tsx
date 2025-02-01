@@ -4,6 +4,7 @@ import { Link, useRouter } from "expo-router";
 import { useMealContext } from "../../contexts/MealContext";
 import { usePlanContext } from "../../contexts/PlanContext";
 
+import { updateChallengeProgress } from "@/firebase/funcs/challenge/updateChallengeProgress";
 import saveMeal from "@/firebase/funcs/meal/saveMeal";
 import { useEffect } from "react";
 
@@ -50,7 +51,7 @@ export default function AddMeal() {
   const handleSaveMeal = () => {
     if (meal.length > 0) {
       saveMealAndFetch();
-      // updateChallengeProgress()  // Assuming challenge progress update
+      updateChallengeProgress(null)
       router.push("/(tabs)");
     } else {
       console.error("No meal to save.");

@@ -80,6 +80,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         }
       })
     } 
+    setCurrentPlanID(updatedPlan.id)
   };
 
   // Fetch all user plans

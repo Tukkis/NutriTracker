@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, Text, View, Pressable, Button, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
+import { SafeAreaView, Text, View, Pressable, Button, FlatList, Alert, StyleSheet, TouchableOpacity } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 import { UserPlan, DailyLog, DataTab, UserMeal } from "@/types/interfaces";
 import { Picker } from "@react-native-picker/picker";
@@ -34,19 +34,29 @@ export default function TabTwoScreen() {
   }, [dailyLogs,currentPlanId]);
 
   const handleLogout = async () => {
-    const isConfirmed = window.confirm("Are you sure you want to sign out?");
-  
-    if (isConfirmed) {
-      try {
-        await signOut(auth);
-        console.log("User signed out successfully");
-        router.replace("/login"); // Redirect to the login page
-      } catch (error) {
-        console.error("Error signing out:", error);
-      }
-    } else {
-      console.log("User canceled the logout");
-    }
+    Alert.alert(
+      "Log Out",
+      "Are you sure you want to sign out?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("User canceled the logout"),
+          style: "cancel"
+        },
+        { 
+          text: "OK", 
+          onPress: async () => {
+            try {
+              await signOut(auth);
+              console.log("User signed out successfully");
+              router.replace("/login"); // Redirect to the login page
+            } catch (error) {
+              console.error("Error signing out:", error);
+            }
+          }
+        }
+      ]
+    );
   };
   
 

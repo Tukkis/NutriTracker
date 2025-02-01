@@ -37,7 +37,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="personal"
         options={{
           title: 'Profile Data',
           tabBarIcon: ({ color }) => <AntDesign name="user" size={24} color={color} />,

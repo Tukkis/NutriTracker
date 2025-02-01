@@ -2,6 +2,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../firestore";
 import { getCurrentUserId } from "../getCurrentUserId";
 import { UserPlan } from "@/types/interfaces";
+import { setCurrentPlan } from "./setCurrentPlan";
 
 export async function updatePlan(userPlan: UserPlan, editPlan: (newPlan: UserPlan) => void) {
     try {
@@ -25,6 +26,7 @@ export async function updatePlan(userPlan: UserPlan, editPlan: (newPlan: UserPla
             console.log(`Plan updated successfully! ID: ${userPlan.id}`);
 
             editPlan(userPlan)
+            setCurrentPlan(userPlan.id)
         } 
     } catch (error) {
         console.error("Error saving the plan: ", error);

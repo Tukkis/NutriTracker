@@ -5,6 +5,11 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -15,7 +20,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.tukkis.NutriTracker"
     },
     "web": {
       "bundler": "metro",
@@ -23,19 +29,27 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ]
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "d8a280fc-8a07-4da6-b2a3-51851add7b74"
+      },
+      "firebase": {
+        "apiKey": "AIzaSyAF5Ulh5oy3BU1CTHBaxes-LvXCHZxf7aI",
+        "authDomain": "nutritracker-8cf71.firebaseapp.com",
+        "projectId": "nutritracker-8cf71",
+        "storageBucket": "nutritracker-8cf71.firebasestorage.app",
+        "messagingSenderId": "342460896916",
+        "appId": "1:342460896916:web:b03d115307dc538113c681",
+        "measurementId": "G-RNY9BZLELW"
+      }
     }
   }
 }

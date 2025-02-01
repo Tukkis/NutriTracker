@@ -13,7 +13,7 @@ const parseDate = (dateString: string): Date => {
   return new Date(year, month - 1, day); 
 }
 
-export async function updateChallengeProgress(daysLog?:DailyLog): Promise<void> {
+export async function updateChallengeProgress(daysLog?: DailyLog | null): Promise<void> {
   try {
     const userId = getCurrentUserId()
     if (!userId) {
@@ -34,8 +34,6 @@ export async function updateChallengeProgress(daysLog?:DailyLog): Promise<void> 
       return;
     }
 
-    console.log(userChallengeData)
-
     let updatedDailyProgress = userChallengeData.dailyProgress;
     let updatedProgress = userChallengeData.progress;
     let updatedCompleted = userChallengeData.completed;
@@ -47,6 +45,8 @@ export async function updateChallengeProgress(daysLog?:DailyLog): Promise<void> 
 
     const indexOfMeal = userChallengeData.name.indexOf("meal")
 
+    console.log(today > parseDate(userChallengeData.endDate), daysLog != null && indexOfMeal !== -1, daysLog)
+    
     if(updatedLastTracked === formattedToday || updatedCompleted){
       console.log("No update")
       return;
@@ -55,7 +55,7 @@ export async function updateChallengeProgress(daysLog?:DailyLog): Promise<void> 
     if(today > parseDate(userChallengeData.endDate)){
       updatedCompleted = true
       updateUserScore(updatedProgress * 10)
-    } else if(!daysLog && indexOfMeal !== -1){
+    } else if(daysLog != null && indexOfMeal !== -1){
       if (userChallengeData.dailyProgress < Number(userChallengeData.name.charAt(indexOfMeal - 2))) {
         updatedDailyProgress += 1; 
       } else {
