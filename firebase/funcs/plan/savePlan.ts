@@ -31,14 +31,6 @@ export default async function savePlan(plan: PlanData, addPlan: (newPlan: UserPl
 
     const userDocRef = doc(db, `users/${userId}`);
     
-    console.log("userDocRef.id:", userDocRef.id);
-    console.log("userId:", userId);
-    console.log("docRef.id:", docRef.id);
-    console.log("docRef.id === userId:", docRef.id === userId);
-    console.log("docRef.id === userId:", userDocRef.id === userId);
-    console.log(typeof userId, typeof docRef.id, typeof userDocRef.id);
-    console.log(userDocRef.id.trim() === userId.trim());
-
     // Update the user's document to set the currentChallenge field
     await updateDoc(userDocRef, {
         currentPlan: docRef.id,  // Set the current challenge to the newly created challenge's ID

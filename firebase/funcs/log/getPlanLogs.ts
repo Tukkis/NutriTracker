@@ -8,6 +8,7 @@ export const getPlanLogs = (): Record<string, DailyLog[]>  => {
         return {};
     }
 
+    //Group plans by log
     const groupedLogs = dailyLogs.reduce((acc, log) => {
         if (!acc[log.plan]) {
         acc[log.plan] = [];
