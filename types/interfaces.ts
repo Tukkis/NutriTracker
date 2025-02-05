@@ -94,6 +94,7 @@ export type ActivityLevel =
   | "super_active";
 
 export interface PlanData {
+    name: string,
     intensity: PlanIntensity;
     startingWeight: number;
     height: number;

@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, SafeAreaView, Pressable, Button, FlatList, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, TextInput, StyleSheet, SafeAreaView, Alert, Pressable, Button, FlatList, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from "react-native";
 import { Link, useRouter } from "expo-router";
 
 import { useMealContext } from "../../contexts/MealContext";
@@ -15,11 +15,11 @@ export default function AddMeal() {
 
   const validateMeal = (): boolean => {
     if (!mealItem.product_name) {
-      console.error("Product name is required.");
+      Alert.alert("Product name is required.");
       return false;
     }
     if (mealItem["energy-kcal"] <= 0 || mealItem.carbohydrates_value < 0 || mealItem.proteins_value < 0 || mealItem.fat_value < 0 || mealItem.amount <= 0) {
-      console.error("All numeric values must be greater than 0.");
+      Alert.alert("All numeric values must be greater than 0.");
       return false;
     }
     return true;
@@ -54,7 +54,7 @@ export default function AddMeal() {
       updateChallengeProgress(null)
       router.push("/(tabs)");
     } else {
-      console.error("No meal to save.");
+      Alert.alert("No meal to save.");
     }
   };
 
@@ -146,7 +146,7 @@ export default function AddMeal() {
               style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
               onPress={handleNavigation}
             >
-              <Text style={styles.buttonText}>Scan Barcode</Text>
+              <Text style={styles.buttonText}>Scan Barcode with camera</Text>
             </Pressable>
           </View>
 

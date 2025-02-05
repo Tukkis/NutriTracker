@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, StyleSheet, SafeAreaView, Dimensions, Button, ActivityIndicator, ScrollView  } from "react-native";
-import { Stack, useRouter } from "expo-router";
+import { Stack } from "expo-router";
 import * as Progress from 'react-native-progress';
 
 import { useEffect, useState } from "react";
@@ -23,8 +23,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [isAppLaunched, setIsAppLaunched] = useState(false);
 
-  const router = useRouter();
-
   useEffect(() => {
     if (!isAppLaunched) {
       updateChallengeProgress(dailyLogs[0]);
@@ -44,22 +42,6 @@ export default function Home() {
     setCurrentPlan(foundPlan)
   }, [currentPlanId]);
 
-  const handleNavigateAddPlan = () => {
-    router.push('/planPages/addPlan');
-  };
-
-  // If there is no current plan, render only the Add Plan button
-  if (currentPlanId === null) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Stack.Screen options={{ title: "Home", headerShown: false }} />
-        <Text style={styles.title}>Nutri tracker</Text>
-        <Button title="Add Plan" onPress={handleNavigateAddPlan} />
-      </SafeAreaView>
-    );
-  }
-
-  // Normal home screen rendering if currentPlanId exists
   return (
     <>
       {loading ? (
@@ -151,7 +133,7 @@ export default function Home() {
           </View> : ''}
           <View style={styles.currentPlan}>
             <Text style={styles.planHeader}>Current Plan:</Text>
-            <Text style={styles.planTitle}>Plan ID: {currentPlan?.id}</Text>
+            <Text style={styles.planTitle}>Plan name: {currentPlan?.planData.name}</Text>
             <Text>Goal: {currentPlan?.planData.goal}</Text>
             <Text>Intensity: {currentPlan?.planData.intensity}</Text>
             <Text>Daily Calories: {currentPlan?.planData.dailyNutrients?.["energy-kcal"]} kcal</Text>

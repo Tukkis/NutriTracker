@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, SafeAreaView, Button, ScrollView, TouchableWithoutFeedback, Keyboard, Platform } from "react-native";
+import { View, Text, TextInput, StyleSheet, SafeAreaView, Button, ScrollView, Alert, TouchableWithoutFeedback, Keyboard, Platform } from "react-native";
 import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { PlanData } from "@/types/interfaces";
@@ -14,9 +14,10 @@ const localDate = new Date();
 localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset());
 
 export default function AddPlan() {
-  const { addPlan } = usePlanContext();
+  const { addPlan, currentPlanId } = usePlanContext();
   const { addChallenge } = useChallengeContext();
   const [plan, setPlan] = useState<PlanData>({
+    name: '',
     intensity: "moderate",
     startingWeight: 0,
     height: 0,
@@ -47,11 +48,11 @@ export default function AddPlan() {
 
   const validatePlan = (): boolean => {
     if (plan.startingWeight <= 0 || plan.height <= 0 || plan.age <= 0) {
-      console.error("All numeric fields must be greater than 0.");
+      Alert.alert("All numeric fields must be greater than 0.");
       return false;
     }
     if (!plan.gender || !plan.activity || !plan.goal || !plan.intensity) {
-      console.error("Gender, activity, goal, and intensity must be selected.");
+      Alert.alert("Gender, activity, goal, and intensity must be selected.");
       return false;
     }
     return true;
@@ -60,7 +61,12 @@ export default function AddPlan() {
   const handleSavePlan = () => {
     if (validatePlan()) {
       savePlan(plan, addPlan, addChallenge);
-      router.push("/explore");
+      if(currentPlanId){
+        Alert.alert('Notice', 'If you have logged meals for today new plan will start tomorrow', [
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ]);
+      }
+      router.push("/personal");
     } else {
       console.log("Plan validation failed.");
     }
@@ -71,6 +77,15 @@ export default function AddPlan() {
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <ScrollView contentContainerStyle={styles.scrollViewContainer} showsVerticalScrollIndicator={false}>
           <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+            <View>
+              <Text style={styles.label}>Plan name</Text>
+              <TextInput
+                  style={styles.input}
+                  value={plan.name}
+                  onChangeText={(text) => handleInputChange("name", text || '')}
+                />
+            </View>
+
             <View style={styles.rowContainer}>
               <View style={styles.halfContainer}>
                 <Text style={styles.label}>Weight (kg):</Text>

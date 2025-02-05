@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, SafeAreaView, Button, ScrollView, TouchableWithoutFeedback, Keyboard, Platform } from "react-native";
+import { View, Text, TextInput, StyleSheet, SafeAreaView, Button, ScrollView, Alert, TouchableWithoutFeedback, Keyboard, Platform } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { PlanData, UserPlan } from "@/types/interfaces";
 import { usePlanContext } from "@/contexts/PlanContext";
@@ -40,11 +40,11 @@ const EditPlan = () => {
 
   const validatePlan = (): boolean => {
     if (plan.startingWeight <= 0 || plan.height <= 0 || plan.age <= 0) {
-      console.error("All numeric fields must be greater than 0.");
+      Alert.alert("All numeric fields must be greater than 0.");
       return false;
     }
     if (!plan.gender || !plan.activity || !plan.goal || !plan.intensity) {
-      console.error("Gender, activity, goal, and intensity must be selected.");
+      Alert.alert("Gender, activity, goal, and intensity must be selected.");
       return false;
     }
     return true;
@@ -59,7 +59,9 @@ const EditPlan = () => {
         planData: plan
       }
       updatePlan(updatedPlan, editPlan);
-      console.log("Plan updated successfully.");
+      Alert.alert('Notice', 'If you have logged meals for today new plan will start tomorrow', [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]);
       router.push("/personal");
     } else {
       console.log("Plan validation failed.");
@@ -71,6 +73,15 @@ const EditPlan = () => {
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <ScrollView contentContainerStyle={styles.scrollViewContainer} showsVerticalScrollIndicator={false}>
           <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+            <View>
+              <Text style={styles.label}>Plan name</Text>
+              <TextInput
+                  style={styles.input}
+                  value={plan.name}
+                  onChangeText={(text) => handleInputChange("name", text || '')}
+                />
+            </View>
+
             <View style={styles.rowContainer}>
               <View style={styles.halfContainer}>
                 <Text style={styles.label}>Weight (kg):</Text>

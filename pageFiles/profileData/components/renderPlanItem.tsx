@@ -17,7 +17,7 @@ export const renderPlanItem = ({
   return (
     <View style={isCurrentPlan ? styles.currentPlan : styles.planItem}>
       {isCurrentPlan && <Text style={styles.planHeader}>Current Plan:</Text>}
-      <Text style={styles.planTitle}>Plan ID: {item.id}</Text>
+      <Text style={styles.planTitle}>Plan name: {item.planData.name}</Text>
       <Text>Goal: {item.planData.goal}</Text>
       <Text>Intensity: {item.planData.intensity}</Text>
       <Text>Daily Calories: {item.planData.dailyNutrients?.["energy-kcal"]} kcal</Text>

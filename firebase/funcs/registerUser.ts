@@ -7,7 +7,7 @@ interface UserData {
   email: string;
 }
 
-export const registerUser = async (email: string, password: string): Promise<void> => {
+export const registerUser = async (email: string, password: string) => {
   try {
     // Register the user with email and password
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -23,9 +23,9 @@ export const registerUser = async (email: string, password: string): Promise<voi
     const userDocRef = doc(db, "users", userId);
     await setDoc(userDocRef, userData);
 
-    console.log("User registered and added to Firestore successfully.");
-  } catch (error) {
-    console.error("Error registering user:", error);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, message: error.message };
     throw error;
   }
 };

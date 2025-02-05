@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, SafeAreaView, Pressable, Button, FlatList, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, TextInput, StyleSheet, SafeAreaView, Alert, Pressable, Button, FlatList, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform } from "react-native";
 import { useMealContext } from "../../contexts/MealContext";
 import { useRouter } from "expo-router";
 import { updateMeal } from "@/firebase/funcs/meal/updateMeal";
@@ -20,11 +20,11 @@ export default function EditMeal() {
 
   const validateMeal = (): boolean => {
     if (!editingMealItem.product_name) {
-      console.error("Product name is required.");
+      Alert.alert("Product name is required.");
       return false;
     }
     if (editingMealItem["energy-kcal"] <= 0 || editingMealItem.carbohydrates_value < 0 || editingMealItem.proteins_value < 0 || editingMealItem.fat_value < 0 || editingMealItem.amount <= 0) {
-      console.error("All numeric values must be greater than 0.");
+      Alert.alert("All numeric values must be greater than 0.");
       return false;
     }
     return true;
@@ -55,7 +55,7 @@ export default function EditMeal() {
         updateMealAndFetch()
         router.push("/(tabs)");
       } else {
-        console.error("No meal to update.");
+        Alert.alert("No meal to update.");
       }
     };
 

@@ -4,6 +4,7 @@ import { PlanData } from "@/types/interfaces";
 describe("calculateDailyNutrients", () => {
   it("should return the correct nutrient distribution for fat loss", () => {
     const plan: PlanData = {
+      name: "plan",
       gender: "male",
       age: 25,
       height: 175,

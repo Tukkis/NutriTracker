@@ -37,4 +37,6 @@ yarn-error.*
 
 app-example
 
+# other
+coverage/
 .env

@@ -10,6 +10,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
     id: "",
     userId: "",
     planData: {
+      name: "",
       intensity: "moderate" as PlanIntensity,
       startingWeight: 70,
       height: 170,
@@ -64,6 +65,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         id: "",
         userId: "",
         planData: {
+          name: "",
           intensity: "moderate" as PlanIntensity,
           startingWeight: 70,
           height: 170,

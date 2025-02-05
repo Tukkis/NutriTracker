@@ -1,7 +1,7 @@
 import { Canvas, DiffRect, rect, rrect } from "@shopify/react-native-skia";
 import { Dimensions, Platform, StyleSheet } from "react-native";
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get("screen");
 
 const innerDimension = 300;
 
@@ -19,11 +19,7 @@ const inner = rrect(
 
 const Overlay = () => {
   return (
-    <Canvas
-      style={
-        Platform.OS === "android" ? { flex: 1 } : StyleSheet.absoluteFillObject
-      }
-    >
+    <Canvas style={StyleSheet.absoluteFillObject}>
       <DiffRect inner={inner} outer={outer} color="black" opacity={0.5} />
     </Canvas>
   );

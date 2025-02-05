@@ -8,6 +8,8 @@ import {
   SafeAreaView,
   StatusBar,
   StyleSheet,
+  Text,
+  Alert
 } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import Overlay from "../../pageFiles/newMeal/components/Overlay";
@@ -16,11 +18,12 @@ import { useMealContext } from "../../contexts/MealContext";
 import { MealItem } from "@/types/interfaces";
 
 export default function CodeReader() {
+  const [permission, requestPermission] = useCameraPermissions(); 
   const qrLock = useRef(false);
   const appState = useRef(AppState.currentState);
   const { setMealItem } = useMealContext(); 
   const router = useRouter(); 
-  const [isScanning, setIsScanning] = useState(false); // Optional: Track scanning state
+  const [isScanning, setIsScanning] = useState(false); 
 
   useEffect(() => {
     //Prevent the app to scan codes in the background
@@ -63,17 +66,34 @@ export default function CodeReader() {
           setMealItem(mealItem);
           router.push("/newMeal");
         } else {
-          console.error("Product data or nutriments missing");
+          Alert.alert("Product data or nutriments missing");
           setIsScanning(false);
         }
-      } catch (error) {
-        console.error("Error fetching product data:", error);
+      } catch (error: any) {
+        Alert.alert("Error fetching product data:", error);
         setIsScanning(false);
       } finally {
         qrLock.current = false; // Reset the lock after the operation completes
       }
     }
   };
+
+  if (!permission) {
+    return null; // Prevent rendering until permission is checked
+  }
+
+  if (!permission.granted) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={{ color: "white", textAlign: "center", marginBottom: 10 }}>
+          Camera access is required to scan barcodes.
+        </Text>
+        <Pressable onPress={requestPermission} style={styles.permissionButton}>
+          <Text style={{ color: "white" }}>Grant Camera Permission</Text>
+        </Pressable>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={StyleSheet.absoluteFillObject}>
@@ -87,7 +107,7 @@ export default function CodeReader() {
       <CameraView
         style={StyleSheet.absoluteFillObject}
         facing="back"
-        onBarcodeScanned={handleBarcodeScanned} // Use the handler
+        onBarcodeScanned={handleBarcodeScanned}
       />
       <Overlay />
     </SafeAreaView>
@@ -95,9 +115,15 @@ export default function CodeReader() {
 }
 
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "black"
-  }
+    backgroundColor: "black",
+  },
+  permissionButton: {
+    backgroundColor: "blue",
+    padding: 10,
+    borderRadius: 5,
+  },
 })

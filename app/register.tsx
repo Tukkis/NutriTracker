@@ -28,7 +28,15 @@ export default function Register({ onToggleRegister }: RegisterProps) {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Register" onPress={() => registerUser(email,password)} />
+      <Button
+        title="Register"
+        onPress={async () => {
+          const result = await registerUser(email, password);
+          if (!result.success) {
+            Alert.alert("Registration Failed", result.message);
+          }
+        }}
+      />
       <Button title="Login" onPress={onToggleRegister} />
     </View>
   );

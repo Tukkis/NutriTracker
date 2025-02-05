@@ -1,4 +1,4 @@
-import { doc, addDoc, collection } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../firestore";
 import { getCurrentUserId } from "../getCurrentUserId";
 import { MealItem, UserMeal } from "@/types/interfaces";

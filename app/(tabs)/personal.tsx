@@ -50,8 +50,8 @@ export default function TabTwoScreen() {
               await signOut(auth);
               console.log("User signed out successfully");
               router.replace("/login"); // Redirect to the login page
-            } catch (error) {
-              console.error("Error signing out:", error);
+            } catch (error: any) {
+              Alert.alert("Error signing out:", error);
             }
           }
         }
@@ -105,14 +105,36 @@ export default function TabTwoScreen() {
               addChallenge(generatedChallenge);
               console.log("Challenge added successfully.");
             }
-          } catch (error) {
-            console.error("Error generating challenge:", error);
+          } catch (error: any) {
+            Alert.alert("Error generating challenge:", error);
           }
           break;
       default:
         console.log("Unhandled tab");
     }
   };
+
+  const handleInfoPress = () => {
+    let message = "";
+    switch (activeTab) {
+      case "plans":
+        message = "Plans determine daily nutritional targets. Calories = BMR * activity multiplier. Macro nutrient distribution is calculated by Goal & Intensity multipliers";
+        break;
+      case "logs":
+        message = "Logs track meals recorded for the current day. Logs adherence and score are based on the plan at the point of adding the first meal of the day.";
+        break;
+      case "meals":
+        message = "Meals are created by adding meal items, either manually or via barcode scanning. The total macronutrients of a meal are summed from its items when saving a meal.";
+        break;
+      case "challenges":
+        message = "Challenges are generated from a pool of possible tasks. You earn points based on how many days you complete the challenge constraints (e.g., reaching a protein goal) within the given time period.";
+        break;
+      default:
+        message = "This section provides insights into your nutrition tracking.";
+    }
+    Alert.alert("Info", message, [{ text: "OK" }]);
+  };
+
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -199,11 +221,14 @@ export default function TabTwoScreen() {
             <Picker.Item label="Challenges" value="challenges" />
           </Picker>
         </View>
+        <TouchableOpacity style={styles.infoButton} onPress={handleInfoPress}>
+          <AntDesign name="infocirlceo" size={24} color="#fff" />
+        </TouchableOpacity>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
       </View>
-      <View style={{ flex: 1 }}>{renderTabContent()}</View>
+      <View style={{ flex: 1, width:'100%' }}>{renderTabContent()}</View>
       {activeTab !== "logs" && (
         <TouchableOpacity style={styles.fab} onPress={handleAddAction}>
         <View style={styles.buttonContent}>
@@ -222,7 +247,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: 42,
+    paddingTop: 42
   },
   header: {
     flexDirection: "row",
@@ -239,6 +264,10 @@ const styles = StyleSheet.create({
   picker: {
     height: 55,
     color: "#000",
+  },
+  infoButton: {
+    marginLeft: 12,
+    padding: 10,
   },
   logoutButton: {
     marginLeft: 16,

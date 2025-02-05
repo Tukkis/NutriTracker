@@ -10,6 +10,7 @@ jest.mock('@/firebase/funcs/plan/getUserPlans', () => ({
       id: "1",
       userId: "user1",
       planData: {
+        name: "",
         intensity: "moderate" as PlanIntensity,
         startingWeight: 70,
         height: 170,
@@ -29,6 +30,7 @@ jest.mock('@/firebase/funcs/plan/getUserPlans', () => ({
       id: "2",
       userId: "user1",
       planData: {
+        name: "",
         intensity: "high" as PlanIntensity,
         startingWeight: 75,
         height: 170,
@@ -82,6 +84,7 @@ it("adds a new plan and updates current plan", async () => {
     id: "3",
     userId: "user1",
     planData: {
+      name: "",
       intensity: "low" as PlanIntensity,
       startingWeight: 80,
       height: 170,
@@ -132,6 +135,7 @@ it("edits a plan and updates the state correctly", async () => {
     id: "1",
     userId: "user1",
     planData: {
+      name: "",
       intensity: "very_high" as PlanIntensity,
       startingWeight: 70,
       height: 170,
