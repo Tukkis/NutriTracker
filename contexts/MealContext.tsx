@@ -4,6 +4,11 @@ import { getUsersMeals } from "@/firebase/funcs/meal/getUsersMeals";
 
 const MealContext = createContext<MealContextType | undefined>(undefined);
 
+const convertToDate = (dateString: string): Date => {
+  const [day, month, year] = dateString.split("-").map(Number);
+  return new Date(year, month - 1, day); 
+};
+
 export const MealProvider = ({ children }: { children: ReactNode }) => {
   const [meals, setMeals] = useState<UserMeal[]>([]);
   const [selectedMeal, setSelectedMeal]= useState<UserMeal | null>(null)
@@ -27,8 +32,13 @@ export const MealProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchMeals = async () => {
       try {
-        const fetchedPlans = await getUsersMeals();
-        setMeals(fetchedPlans);
+        const fetchedMeals = await getUsersMeals();
+        const sortedMeals = fetchedMeals.sort((a, b) => {
+          const dateA = convertToDate(a.date);
+          const dateB = convertToDate(b.date);
+          return dateB.getTime() - dateA.getTime(); 
+        });
+        setMeals(sortedMeals);
       } catch (error) {
         console.error("Error fetching user plans:", error);
       }

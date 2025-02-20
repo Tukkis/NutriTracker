@@ -17,7 +17,7 @@ export async function getUsersMeals(date?: Date) {
     let mealQuery;
 
     if (date) {
-      const formattedDate = formatMealDate(date); // Ensure the date format matches Firestore documents
+      const formattedDate = formatMealDate(date); 
       mealQuery = query(mealsCollectionRef, where("date", "==", formattedDate));
     } else {
       mealQuery = mealsCollectionRef;

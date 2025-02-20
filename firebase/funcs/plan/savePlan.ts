@@ -3,6 +3,7 @@ import { db } from "../../firestore";
 import { getCurrentUserId } from "../getCurrentUserId";
 import { PlanData, UserChallenge, UserPlan } from "@/types/interfaces";
 import { generateUserChallenge } from "../challenge/generateUserChallenge";
+import { setCurrentPlan } from "./setCurrentPlan";
 
 export default async function savePlan(plan: PlanData, addPlan: (newPlan: UserPlan) => void, addChallenge: (challenge: UserChallenge) => void) {
   try {
@@ -31,11 +32,7 @@ export default async function savePlan(plan: PlanData, addPlan: (newPlan: UserPl
 
     const userDocRef = doc(db, `users/${userId}`);
     
-    // Update the user's document to set the currentChallenge field
-    await updateDoc(userDocRef, {
-        currentPlan: docRef.id,  // Set the current challenge to the newly created challenge's ID
-    });
-
+    setCurrentPlan(docRef.id)
     console.log("User's current challenge updated!");
 
     const generatedChallenge = await generateUserChallenge(newPlan)

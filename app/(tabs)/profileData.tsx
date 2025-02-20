@@ -163,6 +163,7 @@ export default function TabTwoScreen() {
             item,
             })
           }
+          contentContainerStyle={styles.listContainer}
           ListEmptyComponent={<Text style={styles.emptyText}>No logs available</Text>}
           /> 
         );

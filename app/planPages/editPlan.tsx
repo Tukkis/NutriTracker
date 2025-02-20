@@ -62,7 +62,7 @@ const EditPlan = () => {
       Alert.alert('Notice', 'If you have logged meals for today new plan will start tomorrow', [
         {text: 'OK', onPress: () => console.log('OK Pressed')},
       ]);
-      router.push("/personal");
+      router.push("/(tabs)");
     } else {
       console.log("Plan validation failed.");
     }

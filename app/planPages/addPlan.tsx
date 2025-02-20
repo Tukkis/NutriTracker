@@ -66,7 +66,7 @@ export default function AddPlan() {
           {text: 'OK', onPress: () => console.log('OK Pressed')},
         ]);
       }
-      router.push("/personal");
+      router.push("/(tabs)");
     } else {
       console.log("Plan validation failed.");
     }

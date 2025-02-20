@@ -91,7 +91,6 @@ export const renderLogItem = ({
 const styles = StyleSheet.create({
   log: {
     margin: 10,
-    width: width * 0.7,
     padding: 5,
     backgroundColor: "#fff",
     borderRadius: 10,

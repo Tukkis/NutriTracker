@@ -9,7 +9,14 @@ import { MealItem } from "@/types/interfaces";
 export default function EditMeal() {
   const { selectedMeal, fetchMeals, mealItem } = useMealContext();
   const [editingMeal, setEditingMeal] = useState<MealItem[]>([])
-  const [editingMealItem, setEditingMealItem] = useState<MealItem>(mealItem)
+  const [editingMealItem, setEditingMealItem] = useState({
+    product_name: "",
+    "energy-kcal": "",
+    carbohydrates_value: "",
+    proteins_value: "",
+    fat_value: "",
+    amount: ""
+  })
   const router = useRouter();
 
   useEffect(() => {
@@ -23,7 +30,18 @@ export default function EditMeal() {
       Alert.alert("Product name is required.");
       return false;
     }
-    if (editingMealItem["energy-kcal"] <= 0 || editingMealItem.carbohydrates_value < 0 || editingMealItem.proteins_value < 0 || editingMealItem.fat_value < 0 || editingMealItem.amount <= 0) {
+    const energy = parseFloat(editingMealItem["energy-kcal"]);
+    const carbs = parseFloat(editingMealItem.carbohydrates_value);
+    const protein = parseFloat(editingMealItem.proteins_value);
+    const fats = parseFloat(editingMealItem.fat_value);
+    const amount = parseFloat(editingMealItem.amount);
+  
+    if (isNaN(energy) || isNaN(carbs) || isNaN(protein) || isNaN(fats) || isNaN(amount)) {
+      Alert.alert("All numeric fields must be filled.");
+      return false;
+    }
+  
+    if (energy <= 0 || carbs < 0 || protein < 0 || fats < 0 || amount <= 0) {
       Alert.alert("All numeric values must be greater than 0.");
       return false;
     }
@@ -33,8 +51,21 @@ export default function EditMeal() {
 
   const handleAddMeal = () => {
     if(validateMeal()){
-      setEditingMeal([...editingMeal, editingMealItem]); 
-      setEditingMealItem({ product_name: "", "energy-kcal": 0, carbohydrates_value: 0, proteins_value: 0, fat_value: 0, amount: 0 }); 
+      setEditingMeal([...editingMeal, {
+        product_name: editingMealItem.product_name,
+        "energy-kcal": parseFloat(editingMealItem["energy-kcal"]) || 0,
+        carbohydrates_value: parseFloat(editingMealItem.carbohydrates_value) || 0,
+        proteins_value: parseFloat(editingMealItem.proteins_value) || 0,
+        fat_value: parseFloat(editingMealItem.fat_value) || 0,
+        amount: parseFloat(editingMealItem.amount) || 0,}]); 
+      setEditingMealItem({  
+        product_name: "",
+        "energy-kcal": "",
+        carbohydrates_value: "",
+        proteins_value: "",
+        fat_value: "",
+        amount: "",
+      }); 
     } else {
       console.error("Meal validation failed")
     }
@@ -58,6 +89,13 @@ export default function EditMeal() {
         Alert.alert("No meal to update.");
       }
     };
+
+  const handleDecimalInput = (text: string, key: keyof typeof editingMealItem) => {
+    // Allow only numbers and a single decimal point
+    if (/^\d*\.?\d*$/.test(text)) {
+      setEditingMealItem({ ...editingMealItem, [key]: text });
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -83,9 +121,7 @@ export default function EditMeal() {
                 placeholder="Energy"
                 keyboardType="numeric"
                 value={editingMealItem["energy-kcal"]?.toString()}
-                onChangeText={(text) =>
-                  setEditingMealItem({ ...editingMealItem, "energy-kcal": parseInt(text) || 0 })
-                }
+                onChangeText={(text) => handleDecimalInput(text, "energy-kcal")}
               />
             </View>
           </View>
@@ -97,12 +133,7 @@ export default function EditMeal() {
                 placeholder="Carbs"
                 keyboardType="numeric"
                 value={editingMealItem.carbohydrates_value.toString()}
-                onChangeText={(text) =>
-                  setEditingMealItem({
-                    ...editingMealItem,
-                    carbohydrates_value: parseInt(text) || 0,
-                  })
-                }
+                onChangeText={(text) => handleDecimalInput(text, "energy-kcal")}
               />
             </View>
             <View style={styles.inputContainer}>
@@ -112,12 +143,7 @@ export default function EditMeal() {
                 placeholder="Protein"
                 keyboardType="numeric"
                 value={editingMealItem.proteins_value.toString()}
-                onChangeText={(text) =>
-                  setEditingMealItem({
-                    ...editingMealItem,
-                    proteins_value: parseInt(text) || 0,
-                  })
-                }
+                onChangeText={(text) => handleDecimalInput(text, "energy-kcal")}
               />
             </View>
           </View>
@@ -129,9 +155,7 @@ export default function EditMeal() {
                 placeholder="Fats"
                 keyboardType="numeric"
                 value={editingMealItem.fat_value.toString()}
-                onChangeText={(text) =>
-                  setEditingMealItem({ ...editingMealItem, fat_value: parseInt(text) || 0 })
-                }
+                onChangeText={(text) => handleDecimalInput(text, "energy-kcal")}
               />
             </View>
             <View style={styles.inputContainer}>
@@ -141,9 +165,7 @@ export default function EditMeal() {
                 placeholder="Amount"
                 keyboardType="numeric"
                 value={editingMealItem.amount.toString()}
-                onChangeText={(text) =>
-                  setEditingMealItem({ ...editingMealItem, amount: parseFloat(text) || 0 })
-                }
+                onChangeText={(text) => handleDecimalInput(text, "energy-kcal")}
               />
             </View>
           </View>

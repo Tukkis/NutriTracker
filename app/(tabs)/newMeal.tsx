@@ -6,19 +6,38 @@ import { usePlanContext } from "../../contexts/PlanContext";
 
 import { updateChallengeProgress } from "@/firebase/funcs/challenge/updateChallengeProgress";
 import saveMeal from "@/firebase/funcs/meal/saveMeal";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function AddMeal() {
-  const { meal, setMeal, mealItem, removeMealItem, setMealItem, addMealItem, fetchMeals } = useMealContext();
+  const { meal, setMeal, removeMealItem, setMealItem, addMealItem, fetchMeals } = useMealContext();
+  const [inputMealItem, setInputMealItem] = useState({
+    product_name: "",
+    "energy-kcal": "",
+    carbohydrates_value: "",
+    proteins_value: "",
+    fat_value: "",
+    amount: ""
+  })
   const { currentPlanId } = usePlanContext();
   const router = useRouter();
 
   const validateMeal = (): boolean => {
-    if (!mealItem.product_name) {
+    if (!inputMealItem.product_name) {
       Alert.alert("Product name is required.");
       return false;
     }
-    if (mealItem["energy-kcal"] <= 0 || mealItem.carbohydrates_value < 0 || mealItem.proteins_value < 0 || mealItem.fat_value < 0 || mealItem.amount <= 0) {
+    const energy = parseFloat(inputMealItem["energy-kcal"]);
+    const carbs = parseFloat(inputMealItem.carbohydrates_value);
+    const protein = parseFloat(inputMealItem.proteins_value);
+    const fats = parseFloat(inputMealItem.fat_value);
+    const amount = parseFloat(inputMealItem.amount);
+  
+    if (isNaN(energy) || isNaN(carbs) || isNaN(protein) || isNaN(fats) || isNaN(amount)) {
+      Alert.alert("All numeric fields must be filled.");
+      return false;
+    }
+  
+    if (energy <= 0 || carbs < 0 || protein < 0 || fats < 0 || amount <= 0) {
       Alert.alert("All numeric values must be greater than 0.");
       return false;
     }
@@ -31,8 +50,22 @@ export default function AddMeal() {
 
   const handleAddMealItem = () => {
     if (validateMeal()) {
-      addMealItem(mealItem);
-      setMealItem({ product_name: "", "energy-kcal": 0, carbohydrates_value: 0, proteins_value: 0, fat_value: 0, amount: 0 });
+      addMealItem({
+        ...inputMealItem,
+        "energy-kcal": parseFloat(inputMealItem["energy-kcal"]) || 0,
+        carbohydrates_value: parseFloat(inputMealItem.carbohydrates_value) || 0,
+        proteins_value: parseFloat(inputMealItem.proteins_value) || 0,
+        fat_value: parseFloat(inputMealItem.fat_value) || 0,
+        amount: parseFloat(inputMealItem.amount) || 0,
+      });
+      setInputMealItem({
+        product_name: "",
+        "energy-kcal": "",
+        carbohydrates_value: "",
+        proteins_value: "",
+        fat_value: "",
+        amount: "",
+      });    
     } else {
       console.error("Meal validation failed");
     }
@@ -55,6 +88,13 @@ export default function AddMeal() {
       router.push("/(tabs)");
     } else {
       Alert.alert("No meal to save.");
+    }
+  };
+
+  const handleDecimalInput = (text: string, key: keyof typeof inputMealItem) => {
+    // Allow only numbers and a single decimal point
+    if (/^\d*\.?\d*$/.test(text)) {
+      setInputMealItem({ ...inputMealItem, [key]: text });
     }
   };
 
@@ -81,8 +121,8 @@ export default function AddMeal() {
                 <TextInput
                   style={styles.input}
                   placeholder="Meal Name"
-                  value={mealItem.product_name}
-                  onChangeText={(text) => setMealItem({ ...mealItem, product_name: text })}
+                  value={inputMealItem.product_name}
+                  onChangeText={(text) => setInputMealItem({ ...inputMealItem, product_name: text })}
                 />
               </View>
               <View style={styles.inputContainer}>
@@ -90,9 +130,9 @@ export default function AddMeal() {
                 <TextInput
                   style={styles.input}
                   placeholder="Energy"
-                  keyboardType="numeric"
-                  value={mealItem["energy-kcal"]?.toString()}
-                  onChangeText={(text) => setMealItem({ ...mealItem, "energy-kcal": parseInt(text) || 0 })}
+                  keyboardType="decimal-pad"
+                  value={inputMealItem["energy-kcal"].toString()}
+                  onChangeText={(text) => handleDecimalInput(text, "energy-kcal")}
                 />
               </View>
             </View>
@@ -102,9 +142,9 @@ export default function AddMeal() {
                 <TextInput
                   style={styles.input}
                   placeholder="Carbs"
-                  keyboardType="numeric"
-                  value={mealItem.carbohydrates_value.toString()}
-                  onChangeText={(text) => setMealItem({ ...mealItem, carbohydrates_value: parseInt(text) || 0 })}
+                  keyboardType="decimal-pad"
+                  value={inputMealItem.carbohydrates_value.toString()}
+                  onChangeText={(text) => handleDecimalInput(text, "carbohydrates_value")}
                 />
               </View>
               <View style={styles.inputContainer}>
@@ -112,9 +152,9 @@ export default function AddMeal() {
                 <TextInput
                   style={styles.input}
                   placeholder="Protein"
-                  keyboardType="numeric"
-                  value={mealItem.proteins_value.toString()}
-                  onChangeText={(text) => setMealItem({ ...mealItem, proteins_value: parseInt(text) || 0 })}
+                  keyboardType="decimal-pad"
+                  value={inputMealItem.proteins_value.toString()}
+                  onChangeText={(text) => handleDecimalInput(text, "proteins_value")}
                 />
               </View>
             </View>
@@ -124,9 +164,9 @@ export default function AddMeal() {
                 <TextInput
                   style={styles.input}
                   placeholder="Fats"
-                  keyboardType="numeric"
-                  value={mealItem.fat_value.toString()}
-                  onChangeText={(text) => setMealItem({ ...mealItem, fat_value: parseInt(text) || 0 })}
+                  keyboardType="decimal-pad"
+                  value={inputMealItem.fat_value.toString()}
+                  onChangeText={(text) => handleDecimalInput(text, "fat_value")}
                 />
               </View>
               <View style={styles.inputContainer}>
@@ -134,9 +174,9 @@ export default function AddMeal() {
                 <TextInput
                   style={styles.input}
                   placeholder="Amount"
-                  keyboardType="numeric"
-                  value={mealItem.amount.toString()}
-                  onChangeText={(text) => setMealItem({ ...mealItem, amount: parseFloat(text) || 0 })}
+                  keyboardType="decimal-pad"
+                  value={inputMealItem.amount.toString()}
+                  onChangeText={(text) => handleDecimalInput(text, "amount")}
                 />
               </View>
             </View>

@@ -47,7 +47,6 @@ export default function RootLayout() {
   }
 
   if (!isAuthenticated) {
-    // Show login or registration based on state
     return showRegister ? (
       <Register onToggleRegister={() => setShowRegister(false)} />
     ) : (
@@ -61,7 +60,15 @@ export default function RootLayout() {
         <DailyLogProvider>
           <ChallengeProvider>
             <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-              <Stack>
+              <Stack  screenOptions={{
+                headerStyle: {
+                  backgroundColor: '#f4511e',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                  fontWeight: 'bold',
+                },
+              }}>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="newMealPages/codeReader" options={{ headerShown: false }} />
                 <Stack.Screen name="newMealPages/editMeal" options={{ headerShown: false }} />
